@@ -1,0 +1,130 @@
+{
+    "menu": [
+        {
+            "id": "1001",
+            "parent_id": "",
+            "title": "Admin",
+            "desc": "Admin Dashboard",
+            "url": "/welcomes"
+        },
+        {
+            "id": "1002",
+            "parent_id": "1001",
+            "title": "Store",
+            "desc": "Manage Store",
+            "url": "/dashboard"
+        },
+        {
+            "id": "1002",
+            "parent_id": "1002",
+            "title": "User Setup",
+            "desc": "Manage User",
+            "url": "",
+            "submenu": [
+                {
+                    "id": "1002",
+                    "title": "User Type",
+                    "url": "userType"
+                },
+                {
+                    "id": "1002",
+                    "title": "User Info",
+                    "url": "userInfo"
+                }
+            ]
+        },
+        {
+            "id": "1002",
+            "parent_id": "1002",
+            "title": "Item Setup",
+            "desc": "Manage Item",
+            "url": "",
+            "submenu": [
+                {
+                    "id": "1002",
+                    "title": "Item Measurement",
+                    "url": "measureUnit"
+                },
+                {
+                    "id": "1002",
+                    "title": "Item Major Category",
+                    "url": "mjrCat"
+                },
+                {
+                    "id": "1002",
+                    "title": "Item Sub Major Category",
+                    "url": "mjrSubCat"
+                },
+                {
+                    "id": "1002",
+                    "title": "Item Minor Category",
+                    "url": "itemMinorCategory"
+                },
+                {
+                    "id": "1002",
+                    "title": "Item Attribute",
+                    "url": "itemAttribute"
+                },
+                {
+                    "id": "1002",
+                    "title": "Item Attribute Value",
+                    "url": "itemAttributeValue"
+                },
+                {
+                    "id": "1002",
+                    "title": "Item Info",
+                    "url": "itemInfo"
+                }
+            ]
+        },
+        {
+            "id": "1003",
+            "parent_id": "",
+            "title": "Fixed Asset",
+            "desc": "Manage Fixed Assets",
+            "url": "/welcomes"
+        },
+        {
+            "id": "1004",
+            "parent_id": "1001",
+            "title": "Survey",
+            "desc": "Survey System Setup",
+            "url": "/dashboard"
+        },
+        {
+            "id": "1005",
+            "parent_id": "",
+            "title": "User Manual",
+            "desc": "User Manual",
+            "url": "/welcomes"
+        },
+        {
+            "id": "2001",
+            "parent_id": "1005",
+            "title": "Store User Manual",
+            "desc": "Store User Manual",
+            "url": "/dashboard"
+        },
+        {
+            "id": "2002",
+            "parent_id": "1005",
+            "title": "Fixed Asset User Manual",
+            "desc": "Fixed Asset User Manual",
+            "url": "/dashboard"
+        },
+        {
+            "id": "2003",
+            "parent_id": "1005",
+            "title": "Codification User Manual",
+            "desc": "Codification User Manual",
+            "url": "/dashboard"
+        },
+        {
+            "id": "1006",
+            "parent_id": "",
+            "title": "Store Accounting",
+            "desc": "Manage Store Accounting",
+            "url": "/welcomes"
+        }
+    ]
+}
