@@ -149,89 +149,27 @@ class ItemInfoController extends Controller
             ]);
         }
     }
-    public function getData(Request $request)
+    public function getdata(Request $request)
     {
-        // Base query
-        $baseQuery = "
-        SELECT
-            ii.id,
-            ii.item_code,
-            ii.name,
-            ii.desc,
-            GROUP_CONCAT(
-                CONCAT('<span class=\"badge bg-label-primary\">', ia.name, '</span> : ', attribute_values_table.attribute_values)
-                ORDER BY ia.name SEPARATOR '</br> '
-            ) AS attributes
-        FROM item_info AS ii
-        JOIN item_attribute_info AS iai ON iai.item_id = ii.id
-        JOIN item_attribute AS ia ON ia.id = iai.attribute_id
-        LEFT JOIN (
-            SELECT
-                iai.attribute_id,
-                GROUP_CONCAT(
-                    CONCAT('<span class=\"badge bg-primary\">', iav.name, '</span>')
-                    ORDER BY iav.name SEPARATOR ', '
-                ) AS attribute_values
-            FROM item_attribute_info AS iai
-            JOIN item_attribute_value AS iav ON iav.id = iai.attribute_value_ids
-            GROUP BY iai.attribute_id
-        ) AS attribute_values_table ON attribute_values_table.attribute_id = ia.id
-        WHERE ii.status != 'D'
-    ";
-
-        // Apply search filters if they are provided
-        $filters = [];
-        if ($request->has('name') && !empty($request->name)) {
-            $filters[] = "ii.name LIKE '%" . $request->name . "%'";
-        }
-        if ($request->has('item_code') && !empty($request->item_code)) {
-            $filters[] = "ii.item_code LIKE '%" . $request->item_code . "%'";
+        $query = DB::table('item_info as p')
+            ->select('p.id','p.item_code', 'p.name', 'p.desc','p.status')
+            ->where('p.status', '!=', 'D');
+        $totalCount = $query->count();
+        if (!empty($request->name)) {
+            $query->where('p.name', 'like', '%' . $request->name . '%');
         }
 
-        // Add filters to the query
-        if (!empty($filters)) {
-            $baseQuery .= " AND " . implode(" AND ", $filters);
-        }
-
-        // Apply ordering
+        $filteredCount = $query->count();
         if ($request->has('order')) {
             $orderColumn = $request->columns[$request->order[0]['column']]['data'];
             $orderDirection = $request->order[0]['dir'];
-            $baseQuery .= " ORDER BY $orderColumn $orderDirection";
+            $query->orderBy($orderColumn, $orderDirection);
         }
 
-        // Get the total count for pagination (without GROUP_CONCAT aggregation)
-        $totalCountQuery = "
-        SELECT COUNT(DISTINCT ii.id) AS total_count
-        FROM item_info AS ii
-        JOIN item_attribute_info AS iai ON iai.item_id = ii.id
-        JOIN item_attribute AS ia ON ia.id = iai.attribute_id
-        WHERE ii.status != 'D'
-    ";
-        $totalCount = DB::select($totalCountQuery)[0]->total_count;
-
-        // Get the filtered count for pagination (simplified query without GROUP_CONCAT)
-        $filteredCountQuery = "
-        SELECT COUNT(DISTINCT ii.id) AS filtered_count
-        FROM item_info AS ii
-        JOIN item_attribute_info AS iai ON iai.item_id = ii.id
-        JOIN item_attribute AS ia ON ia.id = iai.attribute_id
-        WHERE ii.status != 'D'
-    ";
-        if (!empty($filters)) {
-            $filteredCountQuery .= " AND " . implode(" AND ", $filters);
-        }
-        $filteredCount = DB::select($filteredCountQuery)[0]->filtered_count;
-
-        // Paginate the result
         $start = $request->input('start');
         $length = $request->input('length');
-        $paginatedQuery = $baseQuery . " GROUP BY ii.id, ii.item_code, ii.name, ii.desc LIMIT $length OFFSET $start";
+        $data = $query->offset($start)->limit($length)->get();
 
-        // Fetch the data
-        $data = DB::select($paginatedQuery);
-
-        // Return the response in JSON format
         return response()->json([
             'draw' => intval($request->draw),
             'recordsTotal' => $totalCount,

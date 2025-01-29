@@ -6,6 +6,7 @@ use App\Http\Controllers\Controller;
 use App\Models\ItemSetup\ItemAttributeInfo;
 use App\Models\ItemSetup\ItemInfo;
 use App\Models\PO\PurchaseOrder;
+use App\Models\PO\PurchaseOrderDtl;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Validator;
@@ -45,8 +46,8 @@ class PurchaseOrderController extends Controller
                 if ($validator->fails()) {
                     return response()->json(['statusCode' => 204,'statusMsg' => 'Validation Error.', 'errors' => $validator->errors()]);
                 }
-                $item_code =$request->mjr_id.$request->mjr_cat_id.$request->mnr_id.$request->measur_unit_id;
-                $temInfo = PurchaseOrder::create([
+
+                $purchaseOrder = PurchaseOrder::create([
                     'purchase_order_no' =>$request->purchase_order_no,
                     'purchase_order_date' =>$request->purchase_order_date,
                     'lc_bank_id' =>$request->lc_bank_id,
@@ -62,63 +63,29 @@ class PurchaseOrderController extends Controller
                     'status' =>"A",
                     'create_by' => '1',
                 ]);
-                /*$attributes = json_decode($request->attribute, true);  // `true` makes it return an associative array
-                foreach ($attributes as $attribute) {
-                    $attribute_id = $attribute['attribute_ids'];
-                    $attribute_value_ids = implode(',', $attribute['attribute_value_ids']); // Convert array to a comma-separated string
+                $itemDetailsInfo = json_decode($request->itemDetailsInfo, true);
+                foreach ($itemDetailsInfo as $rowData) {
 
-                    // Create the ItemAttributeInfo record
-                    ItemAttributeInfo::create([
-                        'item_id' => $temInfo->id,  // Link the newly created item
-                        'attribute_id' => $attribute_id,  // The selected attribute id
-                        'attribute_value_ids' => $attribute_value_ids,  // Comma-separated string of attribute_value_ids
+                    PurchaseOrderDtl::create([
+                        'purchase_order_id' => $purchaseOrder->id,
+                        'item_id' => $rowData['itemID'],
+                        'attribute_id' => $rowData['attributes'],
+                        'attribute_values_id' => $rowData['attributeValues'],
+                        'rate' => $rowData['con_rate'],
+                        'qunty' => $rowData['qunty'],
+                        'cur_code' => $rowData['cur_code'],
+                        'unit_cost' => $rowData['unit_cost'],
+                        'con_rate' => $rowData['con_rate'],
+                        'vat' => $rowData['vat'],
+                        'atc' => $rowData['atc'],
+                        'remark' => 'N/A',
+                        'status' =>"A",
+                        'create_by' => '1',
                     ]);
-                }*/
+                }
                 return response()->json([
                     "statusCode" => 200,
                     "statusMsg" => "Data Added Successfully"
-                ]);
-            }
-
-            else{
-                $temInfo = ItemInfo::find($request->id);
-                if (!$temInfo) {
-                    return response()->json([
-                        "statusCode" => 404,
-                        "statusMsg" => "Item not found"
-                    ]);
-                }
-
-                $temInfo->mjr_id = $request->mjr_id;
-                $temInfo->mnr_id = $request->mnr_id;
-                $temInfo->measur_unit_id = $request->measur_unit_id;
-                $temInfo->mjr_cat_id = $request->mjr_cat_id;
-                $temInfo->name = $request->name;
-                $temInfo->desc = $request->desc;
-                $temInfo->save();
-
-                $attributes = json_decode($request->attribute, true);
-                foreach ($attributes as $attribute) {
-                    $attribute_id = $attribute['attribute_ids'];
-                    $attribute_value_ids = implode(',', $attribute['attribute_value_ids']);
-                    $existingAttribute = ItemAttributeInfo::where('item_id', $temInfo->id)
-                        ->where('attribute_id', $attribute_id)
-                        ->first();
-
-                    if ($existingAttribute) {
-                        $existingAttribute->attribute_value_ids = $attribute_value_ids;
-                        $existingAttribute->save();
-                    } else {
-                        ItemAttributeInfo::create([
-                            'item_id' => $temInfo->id,
-                            'attribute_id' => $attribute_id,
-                            'attribute_value_ids' => $attribute_value_ids,
-                        ]);
-                    }
-                }
-                return response()->json([
-                    "statusCode" => 200,
-                    "statusMsg" => "Data Updated Successfully"
                 ]);
             }
         } catch (\Exception $e) {
@@ -130,30 +97,115 @@ class PurchaseOrderController extends Controller
     }
     public function destroy($id){
         try {
-            $permission = ItemInfo::findOrFail($id);
-            $permission->update([
+            $purchaseOrder = PurchaseOrder::findOrFail($id);
+            $purchaseOrder->update([
                 'status' => "D",
                 'update_by' => '1',
             ]);
+            $purchaseOrderDtl = PurchaseOrderDtl::where('purchase_order_id', $purchaseOrder->id);
+            if ($purchaseOrderDtl) {
+                $purchaseOrderDtl->update([
+                    'status' => "D",
+                    'update_by' => '1',
+                ]);
+            } else {
+                return response()->json([
+                    "statusCode" => 404,
+                    "statusMsg" => "Purchase Order Detail not found for Purchase Order ID: " . $purchaseOrder->id
+                ]);
+            }
 
-            return  response()->json([
+            return response()->json([
                 "statusCode" => 200
             ]);
         } catch (\Exception $e) {
-
-            return json_encode(array(
+            return response()->json([
                 "statusCode" => 400,
                 "statusMsg" => $e->getMessage()
-            ));;
+            ]);
         }
     }
 
     public function show($id)
     {
         try {
-            $data['itemMaster'] = ItemInfo::findOrFail($id);
-            $data['itemAttibute'] = ItemAttributeInfo::where('item_id','=',$id)->get();
+
+            $data['poMaster'] = PurchaseOrder::findOrFail($id);
+            $data['poDetails'] = PurchaseOrderDtl::where('purchase_order_id','=',$id)->get();
             return $data;
+        } catch (\Exception $e) {
+
+            return response()->json([
+                "statusCode" => 400,
+                "statusMsg" => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function ForwordToAuthorization()
+    {
+        try {
+            $id = request()->input('id');
+
+            $purchaseOrder = PurchaseOrder::findOrFail($id);
+            $purchaseOrder->update([
+                'authorization' => "Authorization Level 1 Pending",
+                'update_by' => '1',
+            ]);
+            return response()->json([
+                "statusCode" => 200,
+                "purchaseOrder" => $purchaseOrder
+            ]);
+        } catch (\Exception $e) {
+
+            return response()->json([
+                "statusCode" => 400,
+                "statusMsg" => $e->getMessage()
+            ]);
+        }
+    }
+
+    public function showDetails()
+    {
+        try {
+            $id = request()->input('id');
+            $purchaseOrderDtl = PurchaseOrderDtl::findOrFail($id);
+            $query = DB::table('purchase_order_dtl as p')
+                ->join('item_info as ii', 'ii.id', '=', 'p.item_id')
+                ->join('item_attribute_value as av', DB::raw('FIND_IN_SET(av.id, p.attribute_values_id)'), '>', DB::raw('0'))
+                ->join('item_attribute as a', 'a.id', '=', 'av.attribute_id')
+                ->select(
+                    'p.id',
+                    'p.purchase_order_id',
+                    'ii.name as item_name',
+                    DB::raw('GROUP_CONCAT(DISTINCT CONCAT(a.name, ": ", av.name) ORDER BY a.name) as attribute_details'),
+                    'p.rate',
+                    'p.qunty',
+                    'p.cur_code',
+                    'p.con_rate',
+                    'p.unit_cost',
+                    'p.vat',
+                    'p.atc'
+                )
+                ->where('p.purchase_order_id', '=', 4)
+                ->groupBy(
+                    'p.id',
+                    'p.purchase_order_id',
+                    'ii.name',
+                    'p.rate',
+                    'p.qunty',
+                    'p.cur_code',
+                    'p.con_rate',
+                    'p.unit_cost',
+                    'p.vat',
+                    'p.atc'
+                )
+                ->get();
+            return $query;
+            return response()->json([
+                "statusCode" => 200,
+                "purchaseOrder" => $purchaseOrderDtl
+            ]);
         } catch (\Exception $e) {
 
             return response()->json([

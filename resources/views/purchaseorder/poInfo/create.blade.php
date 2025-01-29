@@ -317,7 +317,42 @@
                                         </tr>
                                         </thead>
                                         <tbody id="rowsContainer">
-                                        <!-- New rows will be inserted here dynamically -->
+                                        <tr class="dynamic-row">
+                                            <td><button class="btn btn-sm btn-outline-danger remove-row "><i class="bx bx-trash"></i></button></td>
+                                            <td>
+                                                <div class="form-group">
+                                                    <input type="hidden" id="itemIDs" name="itemIDs[]"/>
+                                                    <input type="hidden" id="attributes" name="attributes[]"/>
+                                                    <input type="hidden" id="attributeValues" name="attributeValues[]"/>
+
+                                                    <textarea type="text" class="form-control" name="itemdetailsTextArea[]" id="itemdetailsTextArea">Item : Item Name, Size : Item Size, Capacity : Item Capacity</textarea>
+                                                    <input type="button" class="mt-1 btn btn-outline-info btn-sm addAttributes" value="Select Item Attribute & Values">
+                                                </div>
+                                            </td>
+
+                                            <td>
+                                                <div class="form-group">
+                                                    <select class="form-control select2 cur_code" id="cur_code" name="cur_code[]">
+                                                        <option value="">Select</option>
+                                                        <option value="0001">Taka</option>
+                                                        <option value="0002">USD</option>
+                                                        <option value="0003">Pound</option>
+                                                        <option value="0004">Frunk</option>
+                                                        <option value="0005">EURO</option>
+                                                        <option value="0006">Kuwaiti Dinar</option>
+                                                        <option value="0007">HONG KONG DOLLAR</option>
+                                                        <option value="0008">YEN</option>
+                                                        <option value="0009">INR</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td><input type="number" class="form-control" name="con_rate[]" value="0" id="con_rate" placeholder="Qty"></td>
+                                            <td><input type="number" class="form-control" name="unit_cost[]" value="0" id="unit_cost" placeholder="Unit Cost"></td>
+                                            <td><input type="number" class="form-control" name="qunty[]" value="0" id="qunty" placeholder="Quantity"></td>
+                                            <td><input type="number" class="form-control" name="vat[]" value="0" id="vat" placeholder="VAT"></td>
+                                            <td><input type="number" class="form-control" name="atc[]" value="0" id="atc" placeholder="ATC"></td>
+                                            <td><input type="number" class="form-control" name="item_cost[]" value="0" id="item_cost" placeholder="item cost"></td>
+                                        </tr>
                                         </tbody>
                                         <tfoot>
                                         <tr>
@@ -343,85 +378,47 @@
         <div class="modal-dialog modal-lg" role="document">
             <div class="modal-content">
                 <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel3">Modal title</h5>
-                    <button
-                        type="button"
-                        class="btn-close"
-                        data-bs-dismiss="modal"
-                        aria-label="Close"
-                    ></button>
-                </div>
-                <div class="modal-body">
-                    <form id="addRoleForm" class="row g-3" onsubmit="return false">
-                        @csrf
-                        <select class="form-control select2" name="purchase_type" id="purchase_type">
-                            <option value="">Select Purchase Type</option>
-                            <option value="OT">Open Tendering Method</option>
-                            <option value="LT">Limited Tendering Method</option>
-                            <option value="DP">Direct Procurement Method</option>
-                            <option value="RQ">Request for Quotation Method</option>
-                            <option value="OS">One Stage Two Envelope Tendering Method</option>
-                            <option value="TS">Two-Stage Tendering Method</option>
-                            <option value="OH">Others</option>
-                        </select>
-                        <table id="usersTables" class="table">
-                            <thead>
-                            <tr class="text-nowrap">
-                                <th>#</th>
-                                <th>Item</th>
-                                <th>Attribute</th>
-                                <th>Attribute Value</th>
-                            </tr>
-                            </thead>
-                            <tbody id="rowsContainerItem">
-                            </tbody>
-                            <tfoot>
-                            <tr>
-                                <td colspan="4">
-                                    <button class="btn btn-outline-success btn-sm add-row-item"><i class='bx bx-plus'></i></button>
-                                </td>
-                            </tr>
-                            </tfoot>
-                        </table>
-                    </form>
-                </div>
-                <div class="modal-footer">
-                    <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">
-                        Close
-                    </button>
-                    <button type="button" class="btn btn-primary">Save changes</button>
-                </div>
-            </div>
-        </div>
-    </div>
-    <div class="modal fade bd-example-modal-lg" id="addModal" tabindex="-1" role="dialog"
-         aria-labelledby="myLargeModalLabel" aria-hidden="true">
-        <div class="modal-dialog modal-lg">
-            <div class="modal-content">
-                <div class="modal-header">
-                    <h5 class="modal-title" id="exampleModalLabel3">Modal title</h5>
+                    <h5 class="modal-title" id="exampleModalLabel3">Add Attribute and Values</h5>
                     <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
                 </div>
                 <div class="modal-body">
                     <form id="addRoleForm" class="row g-3" onsubmit="return false">
                         @csrf
-                        <input type="hidden" name="id" id="id"/>
+                        <div class="col m-1">
+                            <label for="item_list_id">Item Details</label>
+                            <select class="form-control select2" name="item_list_id" id="item_list_id"></select>
+                        </div>
                         <table id="usersTables" class="table">
                             <thead>
                             <tr class="text-nowrap">
                                 <th>#</th>
-                                <th>Item</th>
                                 <th>Attribute</th>
                                 <th>Attribute Value</th>
                             </tr>
                             </thead>
                             <tbody id="rowsContainerItem">
-                            <!-- New rows will be inserted here dynamically -->
+                            <tr class="text-nowrap">
+                                <th><button class="btn btn-sm btn-outline-danger remove-row-attribute"><i class="bx bx-trash"></i></button></th>
+                                <th>
+                                    <div class="col m-1">
+                                        <select class="form-control attribute_info_id" name="attribute_info_id[]">
+                                            <option value="">Select Attribute</option>
+                                        </select>
+                                    </div>
+                                </th>
+                                <th>
+                                    <div class="col m-1">
+                                        <select class="form-control attribute_values_info_id" name="attribute_values_info_id[]">
+                                            <option value="">Select Value</option>
+                                        </select>
+                                    </div>
+                                </th>
+                            </tr>
                             </tbody>
                             <tfoot>
                             <tr>
                                 <td colspan="4">
-                                    <button class="btn btn-outline-success btn-sm add-row-item"><i class='bx bx-plus'></i></button>
+                                    <button class="btn btn-outline-success btn-sm add-row-item"><i class="bx bx-plus"></i></button>
                                 </td>
                             </tr>
                             </tfoot>
@@ -431,7 +428,7 @@
 
                 <div class="modal-footer">
                     <button type="button" class="btn btn-outline-secondary" data-bs-dismiss="modal">Close</button>
-                    <button type="button" onclick="addData()" class="btn btn-primary">Save changes</button>
+                    <button type="button" class="btn btn-primary itemInfoSaveRow">Save changes</button>
                 </div>
             </div>
         </div>
@@ -443,8 +440,20 @@
     <script>
         var urlss = "{{ url('showItemsDropDown') }}";
         var csrf_tokens = "{{ csrf_token() }}";
+        var item_list_id = '#item_list_id';
 
-        function loadItem(selectElement) {
+        function addItemModal(selectElement,itemIDsInput,attributesInput,attributeValuesInput) {
+            $(".modal-title").text("Add Attribute and Values");
+            $("#largeModal").modal("show");
+            getTheAllItem(selectElement);
+
+            $("#largeModal").data('itemdetailsTextArea', selectElement);
+            $("#largeModal").data('itemIDs', itemIDsInput);
+            $("#largeModal").data('attributesInput', attributesInput);
+            $("#largeModal").data('attributeValuesInput', attributeValuesInput);
+        }
+
+        function getTheAllItem(selectElement) {
             $.ajax({
                 url: urlss,
                 type: 'GET',
@@ -453,241 +462,303 @@
                 success: function (data) {
                     console.log("Item Data Get Successfully");
                     var category = $.parseJSON(data);
+                    var markup = "<option value=''>Select Item</option>";
                     if (category != '') {
-                        var markup = "<option value=''>Select Item</option>";
                         for (var x = 0; x < category.length; x++) {
                             markup += "<option value=" + category[x].id + ">" + category[x].name + "</option>";
                         }
-                        $(selectElement).html(markup).show();
+                        $(item_list_id).html(markup).show();
                     } else {
-                        var markup = "<option value=''>Select Item</option>";
-                        $(selectElement).html(markup).show();
+                        $(item_list_id).html("<option value=''>Select Item</option>").show();
                     }
                 }
             });
         }
-        function loadAttributes(item_id,selectElement) {
+
+        function getTheAttributes(item_id, element) {
             $.ajax({
                 url: urlss,
                 type: 'GET',
-                data: {'ViewType': 'attribute_for_item','item_id': item_id, "_token": csrf_tokens},
+                data: {'ViewType': 'attribute_for_item', 'item_id': item_id, "_token": csrf_tokens},
                 datatype: 'JSON',
                 success: function (data) {
                     console.log("Attribute Data Get Successfully");
                     var category = $.parseJSON(data);
+                    var markup = "<option value=''>Select Attribute</option>";
                     if (category != '') {
-                        var markup = "<option value=''>Select Attribute</option>";
                         for (var x = 0; x < category.length; x++) {
                             markup += "<option value=" + category[x].id + ">" + category[x].name + "</option>";
                         }
-                        $(selectElement).html(markup).show();
-                    } else {
-                        var markup = "<option value=''>Select Attribute</option>";
-                        $(selectElement).html(markup).show();
                     }
+                    $(element).html(markup).show();
                 }
             });
         }
-        function loadAttributeValues(item_id,attribute_id, selectElement) {
+
+        function getTheAttributeValues(item_id, attribute_id, element) {
             $.ajax({
                 url: urlss,
                 type: 'GET',
-                data: {'ViewType': 'attribute_value_for_item','item_id': item_id, 'attribute_id': attribute_id, "_token": csrf_tokens},
+                data: {'ViewType': 'attribute_value_for_item', 'item_id': item_id, 'attribute_id': attribute_id, "_token": csrf_tokens},
                 datatype: 'JSON',
                 success: function (data) {
                     console.log("Attribute Value Data Get Successfully");
                     var category = $.parseJSON(data);
+                    var markup = "<option value=''>Select Value</option>";
                     if (category != '') {
-                        var markup = "";
                         for (var x = 0; x < category.length; x++) {
                             markup += "<option value=" + category[x].id + ">" + category[x].name + "</option>";
                         }
-                        $(selectElement).html(markup).show();
-                    } else {
-                        var markup = "<option value=''>No Attribute Found</option>";
-                        $(selectElement).html(markup).show();
                     }
+                    $(element).html(markup).show();
                 }
             });
         }
 
-        $(document).ready(function() {
-            $(document).on('click', '.add-row', function(e) {
-                e.preventDefault();
-                var newRow = `
-                    <tr class="dynamic-row">
-                        <td><button class="btn btn-sm btn-outline-danger remove-row "><i class='bx bx-trash' ></i></button></td>
-                        <td>
-                            <div class="form-group">
-                                <input type="button" class="btn btn-outline-info btn-sm addAttributes" value="Select Item Attribute & Values">
-                            </div>
-                        </td>
-
-                        <td>
-                            <div class="form-group">
-                                <select class="form-control select2 cur_code" name="cur_code[]">
-                                    <option value="">Select</option>
-                                    <option value="0001">Taka</option>
-                                    <option value="0002">USD</option>
-                                    <option value="0003">Pound</option>
-                                    <option value="0004">Frunk</option>
-                                    <option value="0005">EURO</option>
-                                    <option value="0006">Kuwati  Diner</option>
-                                    <option value="0007">HONG KONG DOLLAR</option>
-                                    <option value="0008">YEN</option>
-                                    <option value="0009">INR</option>
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <input type="number" class="form-control" name="con_rate[]" value="0" id="con_rate" placeholder="Qty" />
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <input type="number" class="form-control" name="unit_cost[]" value="0" id="unit_cost" placeholder="Qty" />
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <input type="number" class="form-control" name="qunty" value="0" id="qunty" placeholder="Qty" />
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <input type="number" class="form-control" name="vat" value="0" id="vat" placeholder="Vat" />
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <input type="number" class="form-control" name="atc" value="0" id="atc" placeholder="ATC" />
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <input type="number" class="form-control" name="purchase_order_date" value="0" id="purchase_order_date" placeholder="Qty" />
-                            </div>
-                        </td>
-                    </tr>`;
-                $('#rowsContainer').append(newRow);
-                loadItem($('#rowsContainer .dynamic-row:last .item_id'));
-                $('#rowsContainer .dynamic-row:last .select2').select2();
-
-            });
-            $(document).on('click', '.add-row-item', function(e) {
-                e.preventDefault();
-                var newRow = `
-                    <tr class="dynamic-row">
-                        <td><button class="btn btn-sm btn-outline-danger remove-row "><i class='bx bx-trash' ></i></button></td>
-                        <td>
-                            <div class="form-group" for="purchase_types">
-                                <select class="form-control select2" name="purchase_types" id="purchase_types">
-                                    <option value="">Select Purchase Type</option>
-                                    <option value="OT">Open Tendering Method</option>
-                                    <option value="LT">Limited Tendering Method</option>
-                                    <option value="DP">Direct Procurement Method</option>
-                                    <option value="RQ">Request for Quotation Method</option>
-                                    <option value="OS">One Stage Two Envelope Tendering Method</option>
-                                    <option value="TS">Two-Stage Tendering Method</option>
-                                    <option value="OH">Others</option>
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <select class="form-control select2 attribute_id" name="attribute_id[]">
-                                    <!-- This will be populated by loadAttributes() -->
-                                </select>
-                            </div>
-                        </td>
-                        <td>
-                            <div class="form-group">
-                                <select class="form-control select2 attribute_values_id"  name="attribute_values_id[]">
-                                    <!-- This will be populated by loadAttributeValues() -->
-                                </select>
-                            </div>
-                        </td>
-                    </tr>`;
-                $('#rowsContainerItem').append(newRow);
-                loadItem($('#rowsContainerItem .dynamic-row:last .item_ids'));
-                $('#rowsContainerItem .dynamic-row:last .select2').select2();
-
-            });
-
-            $(document).on('click', '.remove-row', function(e) {
-                e.preventDefault();
-                if ($('#rowsContainerItem .dynamic-row').length > 1) {
-                    $(this).closest('tr').remove();
-                } else {
-                    alert("At least one row must remain.");
-                }
-            });
-            $(document).on('click', '.remove-row', function(e) {
-                e.preventDefault();
-                if ($('#rowsContainer .dynamic-row').length > 1) {
-                    $(this).closest('tr').remove();
-                } else {
-                    alert("At least one row must remain.");
-                }
-            });
-
-            $(document).on('change', '.item_ids', function () {
-                console.log("Item ID Changed");
-                var item_id = this.value;
-                var row = $(this).closest('tr');
-                loadAttributes(item_id, row.find('.attribute_id'));
-            });
-
-            $(document).on('click', '.addAttributes', function () {
-                var attribute_id = this.value;
-                var row = $(this).closest('tr');
-                var item_id = row.find('.item_id').val();
-                addAttributes(item_id);
-                console.log("Item ID: " + item_id + ", Attribute ID: " + attribute_id);
-            });
-
-            /*$(document).on('change', '.attribute_id', function () {
-                var attribute_id = this.value;
-                var row = $(this).closest('tr');
-                var item_id = row.find('.item_id').val();
-                loadAttributeValues(item_id, attribute_id, row.find('.attribute_values_id'));
-                console.log("Item ID: " + item_id + ", Attribute ID: " + attribute_id);
-            });*/
-
+        $(document).on('change', item_list_id, function () {
+            var item_id = $(this).val();
+            if (item_id) {
+                console.log('Item selected: ' + item_id);
+                $('#rowsContainerItem').find('.attribute_info_id').each(function () {
+                    getTheAttributes(item_id, this);
+                });
+            } else {
+                console.log('No item selected');
+            }
         });
 
-        function  addAttributes(id){
-            $("#addModal form")[0].reset();
-            $(".modal-title").text("Add Attribute and Values");
-            $("#largeModal").modal("show");
-            $('#id').val(id);
-        }
-    </script>
+        $(document).on('change', '.attribute_info_id', function () {
+            var attribute_id = $(this).val();
+            var item_id = $('#item_list_id').val();
+            var attributeValueSelectElement = $(this).closest('tr').find('.attribute_values_info_id');
+            if (attribute_id) {
+                getTheAttributeValues(item_id, attribute_id, attributeValueSelectElement);
+            } else {
+                attributeValueSelectElement.html("<option value=''>Select Value</option>");
+            }
+        });
 
-    <script>
-        function addData() {
-           /* // Get form data
-            var formData = new FormData($("#itemDataAdd form")[0]);
+        $(document).on('click', '.add-row-item', function (e) {
+            e.preventDefault();
+            var newRow = `
+            <tr class="text-nowrap">
+                <th><button class="btn btn-sm btn-outline-danger remove-row-attribute"><i class="bx bx-trash"></i></button></th>
+                <th>
+                    <div class="col m-1">
+                        <select class="form-control select2 attribute_info_id" name="attribute_info_id[]">
+                            <option value="">Select Attribute</option>
+                        </select>
+                    </div>
+                </th>
+                <th>
+                    <div class="col m-1">
+                        <select class="form-control select2 attribute_values_info_id" name="attribute_values_info_id[]">
+                            <option value="">Select Value</option>
+                        </select>
+                    </div>
+                </th>
+            </tr>`;
 
-            // Get the dynamic rows (attributes)
+            $('#rowsContainerItem').append(newRow);
+            var item_id = $('#item_list_id').val();
+            if (item_id) {
+                $('#rowsContainerItem').find('.attribute_info_id').last().each(function () {
+                    getTheAttributes(item_id, this);
+                });
+            }
+        });
+
+        $(document).on('click', '.remove-row-attribute', function (e) {
+            e.preventDefault();
+            $(this).closest('tr').remove();
+        });
+
+        $(document).on('click', '.add-row', function (e) {
+            e.preventDefault();
+            var newRow = `
+            <tr class="dynamic-row">
+                <td><button class="btn btn-sm btn-outline-danger remove-row"><i class='bx bx-trash'></i></button></td>
+                <td>
+                    <div class="form-group">
+                        <input type="hidden" id="itemIDs" name="itemIDs[]"/>
+                        <input type="hidden" id="attributes" name="attributes[]"/>
+                        <input type="hidden" id="attributeValues" name="attributeValues[]"/>
+                        <textarea class="form-control" name="itemdetailsTextArea" id="itemdetailsTextArea">Item : Item Name, Size : Item Size, Capacity : Item Capacity</textarea>
+                        <input type="button" class="mt-1 btn btn-outline-info btn-sm addAttributes" value="Select Item Attribute & Values">
+                    </div>
+                </td>
+                <td>
+                    <div class="form-group">
+                        <select class="form-control select2 cur_code" name="cur_code[]" id="cur_code">
+                            <option value="">Select</option>
+                            <option value="0001">Taka</option>
+                            <option value="0002">USD</option>
+                            <option value="0003">Pound</option>
+                            <option value="0004">Frunk</option>
+                            <option value="0005">EURO</option>
+                            <option value="0006">Kuwati Diner</option>
+                            <option value="0007">HONG KONG DOLLAR</option>
+                            <option value="0008">YEN</option>
+                            <option value="0009">INR</option>
+                        </select>
+                    </div>
+                </td>
+                <td><input type="number" class="form-control" name="con_rate[]" value="0" id="con_rate" placeholder="Qty" /></td>
+                <td><input type="number" class="form-control" name="unit_cost[]" value="0" id="unit_cost" placeholder="Qty" /></td>
+                <td><input type="number" class="form-control" name="qunty[]" value="0" id="qunty" placeholder="Qty" /></td>
+                <td><input type="number" class="form-control" name="vat[]" value="0" id="vat" placeholder="Vat" /></td>
+                <td><input type="number" class="form-control" name="atc[]" value="0" id="atc" placeholder="ATC" /></td>
+                <td><input type="number" class="form-control" name="item_cost[]" value="0" id="item_cost" placeholder="item cost"></td>
+            </tr>`;
+            $('#rowsContainer').append(newRow);
+            // Re-initialize the event listener for the new row
+            $('#rowsContainer .dynamic-row:last input').on('input', function () {
+                var row = $(this).closest('tr');
+                updateItemCost(row);
+            });
+            // Initial calculation for the newly added row
+            var newRow = $('#rowsContainer .dynamic-row:last');
+            updateItemCost(newRow);
+        });
+
+        $(document).on('click', '.remove-row', function (e) {
+            e.preventDefault();
+            if ($('#rowsContainer .dynamic-row').length > 1) {
+                $(this).closest('tr').remove();
+            } else {
+                alert("At least one row must remain.");
+            }
+        });
+
+        $(document).on('click', '.addAttributes', function () {
+            var row = $(this).closest('tr');
+            var itemdetailsTextArea = row.find('#itemdetailsTextArea');
+            var itemIDsInput = row.find('#itemIDs');
+            var attributesInput = row.find('#attributes');
+            var attributeValuesInput = row.find('#attributeValues');
+
+            addItemModal(itemdetailsTextArea,itemIDsInput,attributesInput,attributeValuesInput);
+        });
+
+        $(document).on('click', '.itemInfoSaveRow', function () {
+            var item_id = $('#item_list_id').val();
+            var item_name = $('#item_list_id option:selected').text();
+
+            if (!item_id) {
+                alert('Please select an item.');
+                return;
+            }
+
+            var item = { name: item_name, id: item_id };
             var attributes = [];
-            $('#rowsContainer .dynamic-row').each(function() {
-                var attribute_id = $(this).find('.attribute_ids').val(); // Get the selected attribute_id
-                var attribute_values_id = $(this).find('.attribute_values_id').val(); // Get the selected attribute_values_id as array
+            var attributeIds = [];
+            var attributeValues = [];
+            var attributeValueIds = [];
 
-                if (attribute_id && attribute_values_id) {
+            $('#rowsContainerItem').find('tr').each(function () {
+                var attribute_id = $(this).find('.attribute_info_id').val();
+                var attribute_name = $(this).find('.attribute_info_id option:selected').text();
+                var attribute_value_id = $(this).find('.attribute_values_info_id').val();
+                var attribute_value_name = $(this).find('.attribute_values_info_id option:selected').text();
+
+                if (attribute_id && attribute_value_id) {
                     attributes.push({
-                        "attribute_ids": attribute_id,
-                        "attribute_values_id": attribute_values_id // Ensure this is an array
+                        name: attribute_name,
+                        id: attribute_id
+                    });
+                    attributeIds.push(attribute_id); // Save only the attribute_id
+                    attributeValueIds.push(attribute_value_id);
+
+                    attributeValues.push({
+                        name: attribute_value_name,
+                        attribute_id: attribute_id,
+                        id: attribute_value_id
                     });
                 }
             });
 
-            // Append the attribute array to the form data
-            formData.append("attribute", JSON.stringify(attributes));*/
-            var formData = new FormData($("#itemDataAdd form")[0]);
+            if (attributes.length === 0 || attributeValues.length === 0) {
+                alert('Please select attributes and their values.');
+                return;
+            }
 
+            var dataToSave = { item: item, attribute: attributes, attributevalue: attributeValues };
+
+            var itemdetailsTextArea = $("#largeModal").data('itemdetailsTextArea');
+            var itemIDsInput = $("#largeModal").data('itemIDs');
+            var attributesInput = $("#largeModal").data('attributesInput');
+            var attributeValuesInput = $("#largeModal").data('attributeValuesInput');
+
+            itemdetailsTextArea.val(
+                "Item : " + item.name + ", " +
+                "Attribute(s) : " + attributes.map(attr => attr.name).join(", ") + ", " +
+                "Value(s) : " + attributeValues.map(val => val.name).join(", ")
+            );
+
+            itemIDsInput.val(item_id);
+            attributesInput.val('{' + attributeIds.join(',') + '}');
+            attributeValuesInput.val(JSON.stringify(attributeValueIds));
+            $("#largeModal form")[0].reset();
+
+            $('#largeModal').modal('hide');
+        });
+
+        function updateItemCost(row) {
+            var con_rate = parseFloat(row.find('input[name="con_rate[]"]').val()) || 0;
+            var unit_cost = parseFloat(row.find('input[name="unit_cost[]"]').val()) || 0;
+            var qunty = parseFloat(row.find('input[name="qunty[]"]').val()) || 0;
+            var vatt = parseFloat(row.find('input[name="vat[]"]').val()) || 0;
+            var atct = parseFloat(row.find('input[name="atc[]"]').val()) || 0;
+
+            var item_cost = (con_rate * unit_cost * qunty) + (vatt + atct);
+
+            row.find('input[name="item_cost[]"]').val(item_cost.toFixed(2));
+        }
+
+        $(document).on('input', 'input[name="con_rate[]"], input[name="unit_cost[]"], input[name="qunty[]"], input[name="vat[]"], input[name="atc[]"]', function () {
+            var row = $(this).closest('tr');
+            updateItemCost(row);
+        });
+
+        $(document).ready(function () {
+            $('#rowsContainer .dynamic-row').each(function () {
+                updateItemCost($(this));
+            });
+        });
+    </script>
+
+    <script>
+
+        function addData() {
+            var formData = new FormData($("#itemDataAdd form")[0]);
+            var itemDetailsInfo = [];
+            $('#rowsContainer .dynamic-row').each(function() {
+                var itemIDs = $(this).find('#itemIDs').val();
+                var attributes = $(this).find('#attributes').val();
+                var attributeValues = $(this).find('#attributeValues').val();
+                var cur_code = $(this).find('#cur_code').val();
+                var con_rate = $(this).find('#con_rate').val();
+                var unit_cost = $(this).find('#unit_cost').val();
+                var qunty = $(this).find('#qunty').val();
+                var vat = $(this).find('#vat').val();
+                var atc = $(this).find('#atc').val();
+
+                if (con_rate && unit_cost) {
+                    itemDetailsInfo.push({
+                                        "itemID": itemIDs,
+                                        "attributes": attributes,
+                                        "attributeValues": attributeValues,
+                                        "cur_code": cur_code,
+                                        "con_rate": con_rate,
+                                        "unit_cost": unit_cost,
+                                        "qunty": qunty,
+                                        "vat": vat,
+                                        "atc": atc
+                                    });
+                }
+            });
+
+            formData.append("itemDetailsInfo", JSON.stringify(itemDetailsInfo));
             var url = "{{ url('purchaseOrder') }}";
             $.ajax({
                 url: url,
@@ -702,16 +773,13 @@
                             title: "Success!",
                             icon: "success"
                         });
-                        $("#itemDataAdd form")[0].reset(); // Reset the form
-                        $('#rowsContainer').empty(); // Clear the rows container
-                        $('#usersTable').DataTable().ajax.reload(); // Reload the DataTable
+                        $("#itemDataAdd form")[0].reset();
+                        $("#itemDataAdd .select2").trigger('change')
+                        $('#rowsContainer').empty();
+                        $('#usersTable').DataTable().ajax.reload();
                     } else if (data.statusCode == 204) {
-                        showErrors(data.errors); // Handle validation errors
+                        showErrors(data.errors);
                     } else {
-                        Swal.fire({
-                            icon: "error",
-                            text: data.statusMsg,
-                        });
                         swal({
                             text: data.statusMsg,
                             icon: "error",
@@ -725,7 +793,7 @@
                     });
                 }
             });
-            return false; // Prevent default form submission
+            return false;
         }
     </script>
 @endsection

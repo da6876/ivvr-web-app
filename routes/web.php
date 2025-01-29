@@ -56,3 +56,5 @@ Route::post('/ItemInfo/data', [\App\Http\Controllers\ItemSetup\ItemInfoControlle
 
 Route::resource('purchaseOrder', \App\Http\Controllers\PO\PurchaseOrderController::class);
 Route::post('/PurchaseOrder/data', [\App\Http\Controllers\PO\PurchaseOrderController::class, 'getdata'])->name('purchaseOrder.data');
+Route::get('ForwordToAuthorization', [\App\Http\Controllers\PO\PurchaseOrderController::class, 'ForwordToAuthorization']);
+Route::get('showDetails', [\App\Http\Controllers\PO\PurchaseOrderController::class, 'showDetails']);

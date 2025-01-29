@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 29, 2025 at 05:20 AM
+-- Generation Time: Jan 29, 2025 at 08:01 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -108,9 +108,9 @@ INSERT INTO `item_attribute_info` (`id`, `item_id`, `attribute_id`, `attribute_v
 (14, 123013, '121000', '122001,122002'),
 (15, 123013, '121004', '122007'),
 (16, 123013, '121002', '122011,122013'),
-(17, 123014, '121000', '122029'),
+(17, 123014, '121000', '122027,122028,122029'),
 (18, 123014, '121001', '122030'),
-(19, 123014, '121003', '122031'),
+(19, 123014, '121003', '122031,122037'),
 (20, 123014, '121004', '122032'),
 (21, 123015, '121002', '122034,122035,122036'),
 (22, 123015, '121003', '122037');
@@ -330,10 +330,35 @@ CREATE TABLE `purchase_order_dtl` (
   `vat` varchar(50) DEFAULT NULL,
   `atc` varchar(50) DEFAULT NULL,
   `remark` text DEFAULT 'I',
+  `status` varchar(10) DEFAULT 'I',
   `create_by` varchar(30) DEFAULT NULL,
   `create_date` datetime DEFAULT current_timestamp(),
   `update_by` varchar(30) DEFAULT NULL,
   `update_date` datetime DEFAULT NULL
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+
+--
+-- Dumping data for table `purchase_order_dtl`
+--
+
+INSERT INTO `purchase_order_dtl` (`id`, `purchase_order_id`, `item_id`, `attribute_id`, `attribute_values_id`, `rate`, `qunty`, `cur_code`, `con_rate`, `unit_cost`, `vat`, `atc`, `remark`, `status`, `create_by`, `create_date`, `update_by`, `update_date`) VALUES
+(1, 4, 123009, '{121000,121001,121003}', '122001,122004,122005', '1', '3', 3, '1', '54', '83', '9', 'N/A', 'A', '1', '2025-01-29 16:27:58', NULL, NULL),
+(2, 4, 123014, '{121000,121001,121003,121004}', '122029,122030,122031,122032', '1', '41', 6, '1', '93', '30', '95', 'N/A', 'A', '1', '2025-01-29 16:27:58', NULL, NULL),
+(3, 5, 123009, '{121000,121001,121003}', '122001,122006,122005', '2', '54', 3, '2', '42', '21', '29', 'N/A', 'A', '1', '2025-01-29 16:31:46', '1', NULL),
+(4, 5, 123014, '{121000,121001,121004}', '122029,122030,122032', '2', '11', 3, '2', '96', '35', '12', 'N/A', 'A', '1', '2025-01-29 16:31:46', '1', NULL),
+(5, 6, 123014, '{121001,121003,121004}', '122030,122031,122032', '5', '42', 5, '5', '83', '8', '1', 'N/A', 'A', '1', '2025-01-29 16:37:30', '1', NULL);
+
+-- --------------------------------------------------------
+
+--
+-- Table structure for table `purchase_order_dtl_attributes`
+--
+
+CREATE TABLE `purchase_order_dtl_attributes` (
+  `id` int(11) NOT NULL,
+  `purchase_order_dtl_id` int(11) DEFAULT NULL,
+  `item_attribute_id` int(11) DEFAULT NULL,
+  `item_attribute_value_id` int(11) DEFAULT NULL
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 
 -- --------------------------------------------------------
@@ -356,7 +381,7 @@ CREATE TABLE `purchase_order_mst` (
   `supplier_id` varchar(50) DEFAULT NULL,
   `consignee_id` varchar(50) DEFAULT NULL,
   `department_id` varchar(50) DEFAULT NULL,
-  `authorization` varchar(20) DEFAULT 'Pendding',
+  `authorization` varchar(100) DEFAULT 'Pendding',
   `status` varchar(1) DEFAULT 'I',
   `create_by` varchar(30) DEFAULT NULL,
   `create_date` datetime DEFAULT current_timestamp(),
@@ -369,7 +394,9 @@ CREATE TABLE `purchase_order_mst` (
 --
 
 INSERT INTO `purchase_order_mst` (`id`, `purchase_order_no`, `purchase_order_date`, `lc_bank_id`, `lc_number`, `lc_date`, `purchase_type`, `cost_type`, `store`, `origin`, `supplier_id`, `consignee_id`, `department_id`, `authorization`, `status`, `create_by`, `create_date`, `update_by`, `update_date`) VALUES
-(1, 'Ratione quo nihil te', '26-Apr-2013', '06', '78', '17-Mar-1970', 'OS', NULL, 'L168', 'L', '000180', '308', NULL, 'Pending', 'A', '1', '2025-01-28 15:57:48', NULL, NULL);
+(4, 'Sed pariatur Aliqua', '17-Feb-1999', '06', '883', '27-Nov-2005', 'TS', NULL, 'L168', 'F', '000013', '210', NULL, 'Pending', 'A', '1', '2025-01-29 16:27:58', NULL, NULL),
+(5, 'Fuga Amet perspici', '01-Jan-1982', '09', '475', '19-Sep-1971', 'OH', NULL, 'L168', 'F', '000011', '730', NULL, 'Authorization Level 1 Pending', 'A', '1', '2025-01-29 16:31:46', '1', NULL),
+(6, 'Perferendis velit es', '08-Sep-2009', '07', '88', '16-Oct-2002', 'OT', NULL, 'L168', 'L', '000174', '752', NULL, 'Pending', 'A', '1', '2025-01-29 16:37:30', '1', NULL);
 
 -- --------------------------------------------------------
 
@@ -7346,6 +7373,15 @@ ALTER TABLE `purchase_order_dtl`
   ADD PRIMARY KEY (`id`);
 
 --
+-- Indexes for table `purchase_order_dtl_attributes`
+--
+ALTER TABLE `purchase_order_dtl_attributes`
+  ADD PRIMARY KEY (`id`),
+  ADD KEY `purchase_order_dtl_id` (`purchase_order_dtl_id`),
+  ADD KEY `item_attribute_id` (`item_attribute_id`),
+  ADD KEY `item_attribute_value_id` (`item_attribute_value_id`);
+
+--
 -- Indexes for table `purchase_order_mst`
 --
 ALTER TABLE `purchase_order_mst`
@@ -7453,13 +7489,19 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `purchase_order_dtl`
 --
 ALTER TABLE `purchase_order_dtl`
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+
+--
+-- AUTO_INCREMENT for table `purchase_order_dtl_attributes`
+--
+ALTER TABLE `purchase_order_dtl_attributes`
   MODIFY `id` int(11) NOT NULL AUTO_INCREMENT;
 
 --
 -- AUTO_INCREMENT for table `purchase_order_mst`
 --
 ALTER TABLE `purchase_order_mst`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=2;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
 
 --
 -- AUTO_INCREMENT for table `st_auxiliary_item_type`
@@ -7506,6 +7548,14 @@ ALTER TABLE `users`
 --
 ALTER TABLE `menus`
   ADD CONSTRAINT `menus_parent_id_foreign` FOREIGN KEY (`parent_id`) REFERENCES `menus` (`id`) ON DELETE CASCADE;
+
+--
+-- Constraints for table `purchase_order_dtl_attributes`
+--
+ALTER TABLE `purchase_order_dtl_attributes`
+  ADD CONSTRAINT `purchase_order_dtl_attributes_ibfk_1` FOREIGN KEY (`purchase_order_dtl_id`) REFERENCES `purchase_order_dtl` (`id`),
+  ADD CONSTRAINT `purchase_order_dtl_attributes_ibfk_2` FOREIGN KEY (`item_attribute_id`) REFERENCES `item_attribute` (`id`),
+  ADD CONSTRAINT `purchase_order_dtl_attributes_ibfk_3` FOREIGN KEY (`item_attribute_value_id`) REFERENCES `item_attribute_value` (`id`);
 COMMIT;
 
 /*!40101 SET CHARACTER_SET_CLIENT=@OLD_CHARACTER_SET_CLIENT */;

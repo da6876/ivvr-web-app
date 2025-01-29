@@ -114,8 +114,8 @@
     <script>
         var csrf_tokens = document.querySelector('meta[name="csrf-token"]').content;
         showMajor();
-        function showMajor(id=null){
 
+        function showMajor(id=null){
             var markup = "<option value=''>Select Minor</option>";
             $("#mnr_id").html(markup).show();
             var urlss = "{{ url('showItemsDropDown') }}";
@@ -162,12 +162,14 @@
                 }
             });
         }
+
         $("#mjr_id").change(function () {
             var mjr_id = this.value;
             showSubMajor('',mjr_id);
             var markup = "<option value=''>Select Sub Major</option>";
             $("#mjr_cat_id").html(markup).show();
         });
+
         $("#mjr_cat_id").change(function () {
             var mjr_cat_id = this.value;
             var mjr_id = $('#mjr_id').val();
@@ -175,6 +177,7 @@
             var markup = "<option value=''>Select Minor</option>";
             $("#mnr_id").html(markup).show();
         });
+
         function showSubMajor(id=null,mjr_id){
             var urlss = "{{ url('showItemsDropDown') }}";
             $.ajax({
@@ -199,6 +202,7 @@
                 }
             });
         }
+
         function showMinor(id=null,mjr_id,mjr_cat_id){
             var urlss = "{{ url('showItemsDropDown') }}";
             $.ajax({
@@ -223,14 +227,11 @@
                 }
             });
         }
-
     </script>
     <script>
-        // Define the URL for loading the attributes and attribute values
         var urlss = "{{ url('showItemsDropDown') }}";
         var csrf_tokens = "{{ csrf_token() }}";
 
-        // Function to load attributes into the select box
         function loadAttributes(selectElement) {
             $.ajax({
                 url: urlss,
@@ -254,7 +255,6 @@
             });
         }
 
-        // Function to load attribute values based on the selected attribute
         function loadAttributeValues(attribute_id, selectElement) {
             $.ajax({
                 url: urlss,
@@ -278,57 +278,45 @@
             });
         }
 
-        // When the document is ready
         $(document).ready(function() {
-            // Add new row functionality
             $(document).on('click', '.add-row', function(e) {
-                e.preventDefault(); // Prevent page reload
-
+                e.preventDefault();
                 var newRow = `
-            <tr class="dynamic-row">
-                <td><button class="btn btn-sm btn-outline-danger remove-row "><i class='bx bx-trash' ></i></button></td>
-                <td>
-                    <div class="form-group">
-                        <select class="form-control select2 attribute_ids" name="attribute_ids[]">
-                            <!-- This will be populated by loadAttributes() -->
-                        </select>
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group">
-                        <select class="form-control select2 attribute_value_ids" multiple="multiple" name="attribute_value_ids[]">
-                            <!-- This will be populated by loadAttributeValues() -->
-                        </select>
-                    </div>
-                </td>
-                <td>
-                    <div class="form-group">
-                        <div class="input-group">
-                            <input type="text" class="form-control" id="newAttributeValue" name="newAttributeValue" placeholder="Attribute Value">
-                            <button class="btn btn-outline-primary" type="button" id="button-addon2">Add</button>
-                        </div>
-                    </div>
-                </td>
-            </tr>`;
-
-                // Append the new row to the table
+                    <tr class="dynamic-row">
+                        <td><button class="btn btn-sm btn-outline-danger remove-row "><i class='bx bx-trash' ></i></button></td>
+                        <td>
+                            <div class="form-group">
+                                <select class="form-control select2 attribute_ids" name="attribute_ids[]">
+                                    <!-- This will be populated by loadAttributes() -->
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <select class="form-control select2 attribute_value_ids" multiple="multiple" name="attribute_value_ids[]">
+                                    <!-- This will be populated by loadAttributeValues() -->
+                                </select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="newAttributeValue" name="newAttributeValue" placeholder="Attribute Value">
+                                    <button class="btn btn-outline-primary" type="button" id="button-addon2">Add</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>`;
                 $('#rowsContainer').append(newRow);
-
-                // Load attributes for the new row
                 loadAttributes($('#rowsContainer .dynamic-row:last .attribute_ids'));
-
-                // Reinitialize select2 for the new row (if you're using it for dropdown styling)
                 $('#rowsContainer .dynamic-row:last .select2').select2();
-
-                // Add functionality for the "Add" button in the new row
                 $('#rowsContainer .dynamic-row:last #button-addon2').on('click', function() {
                     addAttributeValue($(this).closest('tr'));
                 });
             });
 
-            // Remove row functionality
             $(document).on('click', '.remove-row', function(e) {
-                e.preventDefault(); // Prevent page reload
+                e.preventDefault();
                 if ($('#rowsContainer .dynamic-row').length > 1) {
                     $(this).closest('tr').remove();
                 } else {
@@ -336,23 +324,18 @@
                 }
             });
 
-            // On change of attribute select box, load respective attribute values
             $(document).on('change', '.attribute_ids', function () {
                 var attribute_id = this.value;
                 var row = $(this).closest('tr');
                 loadAttributeValues(attribute_id, row.find('.attribute_value_ids'));
             });
 
-            // Initial load of attributes in the first row
             loadAttributes(".attribute_ids");
         });
 
-        // Function to add a new attribute value
         function addAttributeValue(row) {
-            // Get the new attribute value from the input field in the current row
             var newAttributeValue = row.find('#newAttributeValue').val();
             var attribute_ids = row.find('.attribute_ids').val();
-
             if (newAttributeValue.trim() == "") {
                 swal({
                     text: 'Please enter a valid attribute value.',
@@ -361,17 +344,11 @@
                 return;
             }
 
-            // URL for adding attribute value
             var url = "{{ url('itemAttributeValueAdd') }}";
-
             $.ajax({
                 url: url,
                 type: "POST",
-                data: {
-                    'attribute_ids': attribute_ids,
-                    'newAttributeValue': newAttributeValue,
-                    "_token": csrf_tokens
-                },
+                data: {'attribute_ids': attribute_ids, 'newAttributeValue': newAttributeValue, "_token": csrf_tokens},
                 success: function (data) {
                     if (data.statusCode == 200) {
                         swal({
@@ -379,13 +356,11 @@
                             icon: "success",
                             title: "Success!",
                         });
-                        row.find('#newAttributeValue').val(''); // Clear the input field
-
-                        // After successfully adding the attribute value, reload the attribute values for the selected attribute
+                        row.find('#newAttributeValue').val('');
                         var attribute_id = row.find('.attribute_ids').val();
                         loadAttributeValues(attribute_id, row.find('.attribute_value_ids'));
                     } else if (data.statusCode == 204) {
-                        showErrors(data.errors);  // Show errors if any
+                        showErrors(data.errors);
                     } else {
                         swal({
                             text: data.statusMsg,
@@ -407,11 +382,9 @@
     </script>
 
     <script>
+        showAndHideLoading();
         function addData() {
-            // Get form data
             var formData = new FormData($("#itemDataAdd form")[0]);
-
-            // Get the dynamic rows (attributes)
             var attributes = [];
             $('#rowsContainer .dynamic-row').each(function() {
                 var attribute_id = $(this).find('.attribute_ids').val(); // Get the selected attribute_id

@@ -43,7 +43,7 @@
                                     <th>Item Code</th>
                                     <th>Name</th>
                                     <th>Desc</th>
-                                    <th>Attributes Info</th>
+                                    <th>Status</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -80,9 +80,7 @@
                     { data: 'item_code' },
                     { data: 'name' },
                     { data: 'desc' },
-                    {
-                        data: 'attributes'
-                    },
+                    { data: 'status' },
                     {
                         data: null,
                         render: function (data, type, row) {

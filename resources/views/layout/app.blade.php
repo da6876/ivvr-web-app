@@ -275,6 +275,8 @@
 
         <script src="{{ asset('assets/js/select.js') }}"></script>
         <script>
+
+
             function showErrors(errors) {
                 $('.form-control').removeClass('is-invalid');
                 $('.invalid-feedback').remove();

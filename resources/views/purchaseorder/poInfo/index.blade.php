@@ -57,10 +57,49 @@
         </div>
     </div>
 
+    <div class="modal fade" id="exLargeModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-xl" role="document">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title" id="exampleModalLabel4">PO Details</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                </div>
+                <div class="modal-body">
+                    <div class="table-responsive text-nowrap">
+                        <table class="table">
+                            <thead>
+                            <tr class="text-nowrap">
+                                <th>#</th>
+                                <th>Item Name</th>
+                                <th>Attribute Details</th>
+                                <th>Rate</th>
+                                <th>Quantity</th>
+                                <th>Currency Code</th>
+                                <th>Conversion Rate</th>
+                                <th>Unit Cost</th>
+                                <th>VAT</th>
+                                <th>ATC</th>
+                            </tr>
+                            </thead>
+                            <tbody class="table-border-bottom-0">
+                            <!-- Dynamic rows will be appended here by JavaScript -->
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-label-secondary" data-bs-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary">Save changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
 @endsection
 @section('script')
 
     <script>
+        var csrf_token = $('meta[name="csrf-token"]').attr('content');
+
         $(document).ready(function () {
             var table = $('#usersTable').DataTable({
                 processing: true,
@@ -77,14 +116,26 @@
                     { data: 'purchase_order_no' },
                     { data: 'purchase_order_date' },
                     { data: 'lc_number' },
-                    { data: 'authorization' },
+                    {
+                        data: 'authorization',
+                        render: function (data, type, row) {
+                            if(row.authorization=='Pending'){
+                                return `<span class="badge bg-label-info">${row.authorization}</span>
+                                <i class="btn btn-warning btn-sm bx bx-trending-up forword-btn" data-id="${row.id}"> Forword To Authorization</i>`;
+                            }else{
+                                return `<span class="badge bg-label-warning">${row.authorization}</span>`;
+                            }
+
+                        },
+                    },
                     {
                         data: null,
                         render: function (data, type, row) {
                             return `
-                    <i class="btn btn-outline-info btn-sm edit-btn bx bxs-edit edit-btn" data-id="${row.id}"></i>
-                    <i class="btn btn-outline-danger btn-sm delete-btn bx bx-message-square-minus delete-btn" data-id="${row.id}"></i>
-                `;
+                                    <button class="btn btn-outline-info btn-sm view-btn" data-id="${row.id}"><i class='bx bx-list-ul'></i> View Details</button>
+                                    <i class="btn btn-outline-info btn-sm edit-btn bx bxs-edit" data-id="${row.id}"></i>
+                                    <i class="btn btn-outline-danger btn-sm delete-btn bx bx-message-square-minus delete-btn" data-id="${row.id}"></i>
+                                `;
                         },
                         orderable: false,
                         searchable: false
@@ -100,7 +151,7 @@
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
                 pageLength: 10,
-                dom: 'rtip' // Remove search bar and "Show X entries" dropdown
+                dom: 'rtip'
             });
 
             $('#usersTable tbody').on('click', '.edit-btn', function () {
@@ -108,12 +159,76 @@
                 showData(id);
             });
 
+            $('#usersTable tbody').on('click', '.view-btn', function () {
+                var id = $(this).data('id');
+                showDetailsData(id);
+            });
 
-            // Handle Delete button click
+            $('#usersTable tbody').on('click', '.forword-btn', function () {
+                var id = $(this).data('id');
+                swal({
+                    title: "Are you sure?",
+                    text: "Do You Want To Forward  for Authorization !",
+                    icon: "warning",
+                    buttons: {
+                        cancel: {
+                            text: "No, cancel!",
+                            value: null,
+                            visible: true,
+                            className: "btn btn-secondary",
+                            closeModal: true
+                        },
+                        confirm: {
+                            text: "Yes, Forward it!",
+                            value: true,
+                            visible: true,
+                            className: "btn btn-danger",
+                            closeModal: true
+                        }
+                    }
+                }).then((result) => {
+                    if (result) {
+                        $.ajax({
+                            url: "{{ url('ForwordToAuthorization') }}",
+                            type: "GET",
+                            data: {
+                                'id': id,
+                                '_token': csrf_token
+                            },
+                            success: function(response) {
+                                if (response.statusCode == 200) {
+                                    swal({
+                                        title: "Success!",
+                                        text: "Your PO has been Forward.",
+                                        icon: "success",
+                                        button: "OK"
+                                    }).then(() => {
+                                        $('#usersTable').DataTable().ajax.reload();
+                                    });
+                                } else {
+                                    swal({
+                                        title: "Error",
+                                        text: response.message || "An error occurred while deleting the item.",
+                                        icon: "error",
+                                        button: "OK"
+                                    });
+                                }
+                            },
+                            error: function(xhr) {
+                                swal({
+                                    title: "Error",
+                                    text: "Delete failed: " + xhr.responseText,
+                                    icon: "error",
+                                    button: "OK"
+                                });
+                            }
+                        });
+                    }
+                });
+            });
+
             $('#usersTable tbody').on('click', '.delete-btn', function() {
                 var id = $(this).data('id');
-
-                // Show confirmation dialog with swal version 1
                 swal({
                     title: "Are you sure?",
                     text: "You won't be able to revert this!",
@@ -180,10 +295,53 @@
             });
 
             $('#name, #email').on('change keyup', function () {
-                table.draw(); // Reload DataTable with new filters
+                table.draw();
             });
 
         });
+
+        function showDetailsData(id) {
+            // Show the modal
+            $("#exLargeModal").modal("show");
+
+            $.ajax({
+                url: "{{ url('showDetails') }}",
+                type: "GET",
+                data: {'id': id, '_token': csrf_token},
+                success: function(response) {
+                    // Clear existing rows in the table
+                    $('#exLargeModal .table tbody').empty();
+
+                    // Loop through the response and populate the table
+                    response.forEach(function(item, index) {
+                        var row = `<tr>
+                            <th scope="row">${index + 1}</th>
+                            <td>${item.item_name}</td>
+                            <td>${item.attribute_details}</td>
+                            <td>${item.rate}</td>
+                            <td>${item.qunty}</td>
+                            <td>${item.cur_code}</td>
+                            <td>${item.con_rate}</td>
+                            <td>${item.unit_cost}</td>
+                            <td>${item.vat}</td>
+                            <td>${item.atc}</td>
+                        </tr>`;
+                        $('#exLargeModal .table tbody').append(row);
+                    });
+                },
+                error: function(xhr) {
+                    swal({
+                        title: "Error",
+                        text: "Request failed: " + xhr.responseText,
+                        icon: "error",
+                        button: "OK"
+                    });
+                }
+            });
+
+            return false;
+        }
+
         function showData(id) {
             var url = "{{ route('purchaseOrder.edit', ':id') }}";
             url = url.replace(':id', id);
