@@ -74,11 +74,10 @@
                                 <th>Attribute Details</th>
                                 <th>Rate</th>
                                 <th>Quantity</th>
-                                <th>Currency Code</th>
                                 <th>Conversion Rate</th>
-                                <th>Unit Cost</th>
                                 <th>VAT</th>
                                 <th>ATC</th>
+                                <th>Total Amount</th>
                             </tr>
                             </thead>
                             <tbody class="table-border-bottom-0">
@@ -312,20 +311,27 @@
                     // Clear existing rows in the table
                     $('#exLargeModal .table tbody').empty();
 
-                    // Loop through the response and populate the table
                     response.forEach(function(item, index) {
+                        // Split the attribute_details by commas and format each key-value pair
+                        var formattedAttributeDetails = item.attribute_details.split(',').map(function(detail) {
+                            var parts = detail.split(':');
+                            if (parts.length === 2) {
+                                return `<span class="badge bg-label-info">${parts[0].trim()}</span>: <span class="badge bg-info">${parts[1].trim()}</span>`;
+                            }
+                            return detail; // In case there's no `:` to split
+                        }).join('<br>'); // Join the formatted parts with a <br> tag instead of a comma
+                        var totalAmount = (parseFloat(item.rate) * parseFloat(item.qunty) * parseFloat(item.con_rate)) + (parseFloat(item.vat) + parseFloat(item.atc));
                         var row = `<tr>
-                            <th scope="row">${index + 1}</th>
-                            <td>${item.item_name}</td>
-                            <td>${item.attribute_details}</td>
-                            <td>${item.rate}</td>
-                            <td>${item.qunty}</td>
-                            <td>${item.cur_code}</td>
-                            <td>${item.con_rate}</td>
-                            <td>${item.unit_cost}</td>
-                            <td>${item.vat}</td>
-                            <td>${item.atc}</td>
-                        </tr>`;
+                                        <th scope="row">${index + 1}</th>
+                                        <td>${item.item_name}</td>
+                                        <td>${formattedAttributeDetails}</td>
+                                        <td>${item.rate}</td>
+                                        <td>${item.qunty}</td>
+                                        <td>${item.con_rate}</td>
+                                        <td>${item.vat}</td>
+                                        <td>${item.atc}</td>
+                                        <td>${totalAmount.toFixed(2)}</td>
+                                    </tr>`;
                         $('#exLargeModal .table tbody').append(row);
                     });
                 },

@@ -169,7 +169,6 @@ class PurchaseOrderController extends Controller
     {
         try {
             $id = request()->input('id');
-            $purchaseOrderDtl = PurchaseOrderDtl::findOrFail($id);
             $query = DB::table('purchase_order_dtl as p')
                 ->join('item_info as ii', 'ii.id', '=', 'p.item_id')
                 ->join('item_attribute_value as av', DB::raw('FIND_IN_SET(av.id, p.attribute_values_id)'), '>', DB::raw('0'))
@@ -187,7 +186,7 @@ class PurchaseOrderController extends Controller
                     'p.vat',
                     'p.atc'
                 )
-                ->where('p.purchase_order_id', '=', 4)
+                ->where('p.purchase_order_id', '=', $id)
                 ->groupBy(
                     'p.id',
                     'p.purchase_order_id',
@@ -202,10 +201,7 @@ class PurchaseOrderController extends Controller
                 )
                 ->get();
             return $query;
-            return response()->json([
-                "statusCode" => 200,
-                "purchaseOrder" => $purchaseOrderDtl
-            ]);
+
         } catch (\Exception $e) {
 
             return response()->json([
