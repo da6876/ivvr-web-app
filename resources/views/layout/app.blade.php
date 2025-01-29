@@ -79,12 +79,13 @@
                             <!-- Loop through each child menu item -->
                         @foreach($childMenuItems as $menuItem)
                                 <?php
-                                // Check if current URL or any submenu is active
-                                $isActive = Request::is($menuItem['url']) ||
+                                // Use request()->is() with wildcard matching
+                                $isActive = request()->is($menuItem['url'] ) || // Check if the main route matches with wildcard
                                     (isset($menuItem['submenu']) && array_reduce($menuItem['submenu'], function($carry, $submenuItem) {
-                                            return $carry || Request::is($submenuItem['url']);
+                                            return $carry || request()->is($submenuItem['url'] . '*'); // Check if any submenu route matches with wildcard
                                         }, false));
                                 ?>
+
                             <li class="menu-header small text-uppercase">
                                 <span class="menu-header-text" data-i18n="Settings">{{ $menuItem['title'] }}</span>
                             </li>
@@ -99,7 +100,7 @@
                                     <ul class="menu-sub">
                                         <!-- Loop through submenu items -->
                                         @foreach($menuItem['submenu'] as $submenuItem)
-                                            <li class="menu-item {{ Request::is($submenuItem['url']) ? 'active open' : '' }}">
+                                            <li class="menu-item {{ request()->is($submenuItem['url'] . '*') ? 'active open' : '' }}">
                                                 <a href="{{ url($submenuItem['url']) }}" class="menu-link">
                                                     <div class="text-truncate" data-i18n="{{ $submenuItem['title'] }}">{{ $submenuItem['title'] }}</div>
                                                 </a>
@@ -283,6 +284,13 @@
                     var errorDiv = $('<div class="invalid-feedback"></div>').text(errorMessages[0]);
                     inputElement.after(errorDiv);
                 });
+            }
+            function showLoading(){
+                document.querySelector('.loader-overlay').style.display = 'flex';
+            }
+
+            function hideLoading(){
+                document.querySelector('.loader-overlay').style.display = 'none';
             }
         </script>
         @yield('script')

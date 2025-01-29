@@ -53,3 +53,6 @@ Route::post('/ItemAttributeValue/data', [\App\Http\Controllers\ItemSetup\ItemAtt
 Route::resource('itemInfo', \App\Http\Controllers\ItemSetup\ItemInfoController::class);
 Route::get('showItemsDropDown', [\App\Http\Controllers\ItemSetup\ItemInfoController::class, 'showItemsDropDown']);
 Route::post('/ItemInfo/data', [\App\Http\Controllers\ItemSetup\ItemInfoController::class, 'getdata'])->name('itemInfo.data');
+
+Route::resource('purchaseOrder', \App\Http\Controllers\PO\PurchaseOrderController::class);
+Route::post('/PurchaseOrder/data', [\App\Http\Controllers\PO\PurchaseOrderController::class, 'getdata'])->name('purchaseOrder.data');

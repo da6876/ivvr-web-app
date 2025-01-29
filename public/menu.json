@@ -15,6 +15,20 @@
             "url": "/dashboard"
         },
         {
+            "id": "1007",
+            "parent_id": "1002",
+            "title": "Purchase Order Manage",
+            "desc": "Manage User",
+            "url": "",
+            "submenu": [
+                {
+                    "id": "1007",
+                    "title": "Purchase Order",
+                    "url": "purchaseOrder"
+                }
+            ]
+        },
+        {
             "id": "1002",
             "parent_id": "1002",
             "title": "User Setup",

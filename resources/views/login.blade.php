@@ -64,7 +64,8 @@
         var UseUser  = $("#password").val();
         if (UseId!=''){
             if (UseUser!=''){
-                loginNow();
+                window.location.href = "welcome";
+                //loginNow();
             } else{
                 swal({
                     text: "Enter Your Password Here !!",

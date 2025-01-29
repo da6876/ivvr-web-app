@@ -21,6 +21,18 @@
             border: 1px solid #68b664 !important;
             border-radius: 4px !important;
         }
+        .loader-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(255, 255, 255, 0.8);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 9999; /* Make sure it's on top */
+        }
     </style>
 @endsection
 @section('main')
@@ -29,13 +41,27 @@
             <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body" id="itemDataAdd">
+                        <div class="loader-overlay" >
+                            <div class="container text-center loader">
+                                <div class="spinner-grow text-muted"></div>
+                                <div class="spinner-grow text-primary"></div>
+                                <div class="spinner-grow text-success"></div>
+                                <div class="spinner-grow text-info"></div>
+                                <div class="spinner-grow text-warning"></div>
+                                <div class="spinner-grow text-danger"></div>
+                                <div class="spinner-grow text-secondary"></div>
+                                <div class="spinner-grow text-dark"></div>
+                                <div class="spinner-grow text-light"></div>
+                                <h4>Processing Please Wait</h4>
+                            </div>
+                        </div>
                         <h4 class="card-title">Item Create</h4>
                         <p class="card-description">
                             Basic form elements
                         </p>
                         <form class="forms-sample">@csrf
                             <div class="row">
-
+                                <input type="hidden" name="id" id="id"/>
                                 <div class="col-md-6">
                                     <div class="form-group">
                                         <label for="mjr_id">Select Major Category</label>
@@ -54,7 +80,7 @@
                             <div class="row">
                                 <div class="col-md-6">
                                     <div class="form-group">
-                                        <label for="mnr_id">Select Manor Category</label>
+                                        <label for="mnr_id">Select Minor Category</label>
                                         <select class="form-control select2" name="mnr_id" id="mnr_id">
                                         </select>
                                     </div>
@@ -112,25 +138,25 @@
 @section('script')
 
     <script>
-        var csrf_tokens = document.querySelector('meta[name="csrf-token"]').content;
-        showMajor();
-        function showMajor(id=null){
+        showAndHideLoading();
+        var csrf_tokens = "{{ csrf_token() }}";
+        var urlss = "{{ url('showItemsDropDown') }}";
 
-            var markup = "<option value=''>Select Minor</option>";
-            $("#mnr_id").html(markup).show();
-            var urlss = "{{ url('showItemsDropDown') }}";
+        // Function to load and show Major dropdown
+        function showMajor(id=null){
+            var markup = "<option value=''>Select Major Category</option>";
+            $("#mjr_id").html(markup).show();
             $.ajax({
                 url: urlss,
                 type: 'GET',
                 data: {'ViewType': 'mjr', "_token": csrf_tokens},
                 datatype: 'JSON',
                 success: function (data) {
-                    console.log("Major Data Get Successfully");
                     var category = $.parseJSON(data);
                     if (category != '') {
                         var markup = "<option value=''>Select Major Category</option>";
                         for (var x = 0; x < category.length; x++) {
-                            markup += "<option value=" + category[x].mjr_code + ">" +category[x].mjr_code +' - '+ category[x].mjr_desc + "</option>";
+                            markup += "<option value=" + category[x].mjr_code + ">" +category[x].mjr_code + ' - ' + category[x].mjr_desc + "</option>";
                         }
                         $("#mjr_id").html(markup).show();
                         $('#mjr_id').val(id).trigger('change');
@@ -140,18 +166,23 @@
                     }
                 }
             });
+        }
+
+        // Function to load and show Measurement Unit dropdown
+        function showMeasurement(id=null){
+            var markup = "<option value=''>Select Measurement Unit</option>";
+            $("#measur_unit_id").html(markup).show();
             $.ajax({
                 url: urlss,
                 type: 'GET',
                 data: {'ViewType': 'measur_unit', "_token": csrf_tokens},
                 datatype: 'JSON',
                 success: function (data) {
-                    console.log("Measurement Unit Data Get Successfully");
                     var category = $.parseJSON(data);
                     if (category != '') {
                         var markup = "<option value=''>Select Measurement Unit</option>";
                         for (var x = 0; x < category.length; x++) {
-                            markup += "<option value=" + category[x].msr_unit_code + ">" +category[x].msr_unit_code +' - '+ category[x].msr_unit_desc + "</option>";
+                            markup += "<option value=" + category[x].msr_unit_code + ">" +category[x].msr_unit_code + ' - ' + category[x].msr_unit_desc + "</option>";
                         }
                         $("#measur_unit_id").html(markup).show();
                         $('#measur_unit_id').val(id).trigger('change');
@@ -162,33 +193,20 @@
                 }
             });
         }
-        $("#mjr_id").change(function () {
-            var mjr_id = this.value;
-            showSubMajor('',mjr_id);
-            var markup = "<option value=''>Select Sub Major</option>";
-            $("#mjr_cat_id").html(markup).show();
-        });
-        $("#mjr_cat_id").change(function () {
-            var mjr_cat_id = this.value;
-            var mjr_id = $('#mjr_id').val();
-            showMinor('',mjr_id,mjr_cat_id);
-            var markup = "<option value=''>Select Minor</option>";
-            $("#mnr_id").html(markup).show();
-        });
+
+        // Function to load and show Sub Major dropdown based on Major category
         function showSubMajor(id=null,mjr_id){
-            var urlss = "{{ url('showItemsDropDown') }}";
             $.ajax({
                 url: urlss,
                 type: 'GET',
                 data: {'ViewType': 'mjr_cat','mjr_id': mjr_id, "_token": csrf_tokens},
                 datatype: 'JSON',
                 success: function (data) {
-                    console.log("Sub Major Data Get Successfully");
                     var category = $.parseJSON(data);
                     if (category != '') {
                         var markup = "<option value=''>Select Sub Major Category</option>";
                         for (var x = 0; x < category.length; x++) {
-                            markup += "<option value=" + category[x].mjr_sub_code + ">" +category[x].mjr_sub_code +' - '+ category[x].mjr_sub_desc + "</option>";
+                            markup += "<option value=" + category[x].mjr_sub_code + ">" +category[x].mjr_sub_code + ' - ' + category[x].mjr_sub_desc + "</option>";
                         }
                         $("#mjr_cat_id").html(markup).show();
                         $('#mjr_cat_id').val(id).trigger('change');
@@ -199,20 +217,20 @@
                 }
             });
         }
+
+        // Function to load and show Minor dropdown based on Sub Major category
         function showMinor(id=null,mjr_id,mjr_cat_id){
-            var urlss = "{{ url('showItemsDropDown') }}";
             $.ajax({
                 url: urlss,
                 type: 'GET',
                 data: {'ViewType': 'mnr','mjr_id': mjr_id,'mjr_cat_id': mjr_cat_id, "_token": csrf_tokens},
                 datatype: 'JSON',
                 success: function (data) {
-                    console.log("Minor Data Get Successfully");
                     var category = $.parseJSON(data);
                     if (category != '') {
                         var markup = "<option value=''>Select Minor Category</option>";
                         for (var x = 0; x < category.length; x++) {
-                            markup += "<option value=" + category[x].mnr_code + ">" +category[x].mnr_code +' - '+ category[x].mnr_desc + "</option>";
+                            markup += "<option value=" + category[x].mnr_code + ">" +category[x].mnr_code + ' - ' + category[x].mnr_desc + "</option>";
                         }
                         $("#mnr_id").html(markup).show();
                         $('#mnr_id').val(id).trigger('change');
@@ -224,21 +242,14 @@
             });
         }
 
-    </script>
-    <script>
-        // Define the URL for loading the attributes and attribute values
-        var urlss = "{{ url('showItemsDropDown') }}";
-        var csrf_tokens = "{{ csrf_token() }}";
-
         // Function to load attributes into the select box
-        function loadAttributes(selectElement) {
+        function loadAttributes(selectElement, selectedAttributeId=null) {
             $.ajax({
                 url: urlss,
                 type: 'GET',
                 data: {'ViewType': 'attribute', "_token": csrf_tokens},
                 datatype: 'JSON',
                 success: function (data) {
-                    console.log("Attribute Data Get Successfully");
                     var category = $.parseJSON(data);
                     if (category != '') {
                         var markup = "<option value=''>Select Attribute</option>";
@@ -246,6 +257,11 @@
                             markup += "<option value=" + category[x].id + ">" + category[x].name + "</option>";
                         }
                         $(selectElement).html(markup).show();
+
+                        // If selectedAttributeId is provided, set the selected option
+                        if (selectedAttributeId) {
+                            $(selectElement).val(selectedAttributeId).trigger('change');
+                        }
                     } else {
                         var markup = "<option value=''>Select Attribute</option>";
                         $(selectElement).html(markup).show();
@@ -255,14 +271,13 @@
         }
 
         // Function to load attribute values based on the selected attribute
-        function loadAttributeValues(attribute_id, selectElement) {
+        function loadAttributeValues(attribute_id, selectElement, selectedValues=null) {
             $.ajax({
                 url: urlss,
                 type: 'GET',
                 data: {'ViewType': 'attribute_value', 'attribute_id': attribute_id, "_token": csrf_tokens},
                 datatype: 'JSON',
                 success: function (data) {
-                    console.log("Attribute Value Data Get Successfully");
                     var category = $.parseJSON(data);
                     if (category != '') {
                         var markup = "";
@@ -270,6 +285,12 @@
                             markup += "<option value=" + category[x].id + ">" + category[x].name + "</option>";
                         }
                         $(selectElement).html(markup).show();
+
+                        // If selectedValues is provided, select the appropriate options
+                        if (selectedValues) {
+                            var valuesArray = selectedValues.split(','); // Assuming values are comma-separated
+                            $(selectElement).val(valuesArray).trigger('change');
+                        }
                     } else {
                         var markup = "<option value=''>No Attribute Found</option>";
                         $(selectElement).html(markup).show();
@@ -278,27 +299,82 @@
             });
         }
 
-        // When the document is ready
-        $(document).ready(function() {
-            // Add new row functionality
-            $(document).on('click', '.add-row', function(e) {
-                e.preventDefault(); // Prevent page reload
+        // When the page loads, load the data to update the item
+        var ItemId = "{{$itemID}}";
+        $.ajax({
+            url: "{{ url('itemInfo') }}" + '/' + ItemId,
+            type: "GET",
+            dataType: "JSON",
+            success: function (data) {
+                $('#id').val(data.itemMaster.id);
+                $('#name').val(data.itemMaster.name);
+                $('#desc').val(data.itemMaster.desc);
+                $('#status').val(data.itemMaster.status);
+                showMajor(data.itemMaster.mjr_id);
+                showMeasurement(data.itemMaster.measur_unit_id);
+                showSubMajor(data.itemMaster.mjr_cat_id, data.itemMaster.mjr_id);
+                showMinor(data.itemMaster.mnr_id, data.itemMaster.mjr_id, data.itemMaster.mjr_cat_id);
 
-                var newRow = `
+                // Iterate through itemAttributes and create rows accordingly
+                data.itemAttibute.forEach(function(attributeData) {
+                    var newRow = `
+                    <tr class="dynamic-row">
+                        <td><button class="btn btn-sm btn-outline-danger remove-row"><i class='bx bx-trash'></i></button></td>
+                        <td>
+                            <div class="form-group">
+                                <select class="form-control select2 attribute_ids" name="attribute_ids[]"></select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <select class="form-control select2 attribute_value_ids" multiple="multiple" name="attribute_value_ids[]"></select>
+                            </div>
+                        </td>
+                        <td>
+                            <div class="form-group">
+                                <div class="input-group">
+                                    <input type="text" class="form-control" id="newAttributeValue" name="newAttributeValue" placeholder="Attribute Value">
+                                    <button class="btn btn-outline-primary" type="button" id="button-addon2">Add</button>
+                                </div>
+                            </div>
+                        </td>
+                    </tr>
+                `;
+                    $('#rowsContainer').append(newRow);
+
+                    // Load attributes and values for this row
+                    loadAttributes($('#rowsContainer .dynamic-row:last .attribute_ids'), attributeData.attribute_id);
+                    loadAttributeValues(attributeData.attribute_id, $('#rowsContainer .dynamic-row:last .attribute_value_ids'), attributeData.attribute_value_ids);
+                    $('#rowsContainer .dynamic-row:last .select2').select2();
+                    $('#rowsContainer .dynamic-row:last #button-addon2').on('click', function() {
+                        addAttributeValue($(this).closest('tr'));
+                    });
+                });
+            },
+            error: function () {
+                swal({
+                    title: "Oops",
+                    text: "Error Occurred while loading item data.",
+                    icon: "error",
+                    timer: 1500
+                });
+                hideLoading();
+            }
+        });
+
+        $(document).on('click', '.add-row', function(e) {
+            e.preventDefault();
+            var newRow = `
             <tr class="dynamic-row">
-                <td><button class="btn btn-sm btn-outline-danger remove-row "><i class='bx bx-trash' ></i></button></td>
+                <td><button class="btn btn-sm btn-outline-danger remove-row"><i class='bx bx-trash'></i></button></td>
                 <td>
                     <div class="form-group">
-                        <select class="form-control select2 attribute_ids" name="attribute_ids[]">
-                            <!-- This will be populated by loadAttributes() -->
-                        </select>
+                        <select class="form-control select2 attribute_ids" name="attribute_ids[]"></select>
                     </div>
                 </td>
                 <td>
                     <div class="form-group">
-                        <select class="form-control select2 attribute_value_ids" multiple="multiple" name="attribute_value_ids[]">
-                            <!-- This will be populated by loadAttributeValues() -->
-                        </select>
+                        <select class="form-control select2 attribute_value_ids" multiple="multiple" name="attribute_value_ids[]"></select>
                     </div>
                 </td>
                 <td>
@@ -309,47 +385,27 @@
                         </div>
                     </div>
                 </td>
-            </tr>`;
+            </tr>
+        `;
+            $('#rowsContainer').append(newRow);
+            loadAttributes($('#rowsContainer .dynamic-row:last .attribute_ids'));
+            $('#rowsContainer .dynamic-row:last .select2').select2();
 
-                // Append the new row to the table
-                $('#rowsContainer').append(newRow);
-
-                // Load attributes for the new row
-                loadAttributes($('#rowsContainer .dynamic-row:last .attribute_ids'));
-
-                // Reinitialize select2 for the new row (if you're using it for dropdown styling)
-                $('#rowsContainer .dynamic-row:last .select2').select2();
-
-                // Add functionality for the "Add" button in the new row
-                $('#rowsContainer .dynamic-row:last #button-addon2').on('click', function() {
-                    addAttributeValue($(this).closest('tr'));
-                });
+            $('#rowsContainer .dynamic-row:last #button-addon2').on('click', function() {
+                addAttributeValue($(this).closest('tr'));
             });
-
-            // Remove row functionality
-            $(document).on('click', '.remove-row', function(e) {
-                e.preventDefault(); // Prevent page reload
-                if ($('#rowsContainer .dynamic-row').length > 1) {
-                    $(this).closest('tr').remove();
-                } else {
-                    alert("At least one row must remain.");
-                }
-            });
-
-            // On change of attribute select box, load respective attribute values
-            $(document).on('change', '.attribute_ids', function () {
-                var attribute_id = this.value;
-                var row = $(this).closest('tr');
-                loadAttributeValues(attribute_id, row.find('.attribute_value_ids'));
-            });
-
-            // Initial load of attributes in the first row
-            loadAttributes(".attribute_ids");
         });
 
-        // Function to add a new attribute value
+        $(document).on('click', '.remove-row', function(e) {
+            e.preventDefault();
+            if ($('#rowsContainer .dynamic-row').length > 1) {
+                $(this).closest('tr').remove();
+            } else {
+                alert("At least one row must remain.");
+            }
+        });
+
         function addAttributeValue(row) {
-            // Get the new attribute value from the input field in the current row
             var newAttributeValue = row.find('#newAttributeValue').val();
             var attribute_ids = row.find('.attribute_ids').val();
 
@@ -361,7 +417,6 @@
                 return;
             }
 
-            // URL for adding attribute value
             var url = "{{ url('itemAttributeValueAdd') }}";
 
             $.ajax({
@@ -379,13 +434,9 @@
                             icon: "success",
                             title: "Success!",
                         });
-                        row.find('#newAttributeValue').val(''); // Clear the input field
-
-                        // After successfully adding the attribute value, reload the attribute values for the selected attribute
+                        row.find('#newAttributeValue').val('');
                         var attribute_id = row.find('.attribute_ids').val();
                         loadAttributeValues(attribute_id, row.find('.attribute_value_ids'));
-                    } else if (data.statusCode == 204) {
-                        showErrors(data.errors);  // Show errors if any
                     } else {
                         swal({
                             text: data.statusMsg,
@@ -402,33 +453,32 @@
                     });
                 }
             });
-            return false;
+        }
+
+        function showAndHideLoading() {
+            showLoading();
+            setTimeout(function() {
+                hideLoading();
+            }, 5000);
         }
     </script>
 
-    <script>
-        function addData() {
-            // Get form data
-            var formData = new FormData($("#itemDataAdd form")[0]);
 
-            // Get the dynamic rows (attributes)
+    <script >
+        function addData() {
+            var formData = new FormData($("#itemDataAdd form")[0]);
             var attributes = [];
             $('#rowsContainer .dynamic-row').each(function() {
-                var attribute_id = $(this).find('.attribute_ids').val(); // Get the selected attribute_id
-                var attribute_value_ids = $(this).find('.attribute_value_ids').val(); // Get the selected attribute_value_ids as array
-
+                var attribute_id = $(this).find('.attribute_ids').val();
+                var attribute_value_ids = $(this).find('.attribute_value_ids').val();
                 if (attribute_id && attribute_value_ids) {
                     attributes.push({
                         "attribute_ids": attribute_id,
-                        "attribute_value_ids": attribute_value_ids // Ensure this is an array
+                        "attribute_value_ids": attribute_value_ids
                     });
                 }
             });
-
-            // Append the attribute array to the form data
             formData.append("attribute", JSON.stringify(attributes));
-
-            // Send the data via AJAX
             var url = "{{ url('itemInfo') }}";
             $.ajax({
                 url: url,
@@ -443,11 +493,11 @@
                             title: "Success!",
                             icon: "success"
                         });
-                        $("#itemDataAdd form")[0].reset(); // Reset the form
-                        $('#rowsContainer').empty(); // Clear the rows container
-                        $('#usersTable').DataTable().ajax.reload(); // Reload the DataTable
+                        $("#itemDataAdd form")[0].reset();
+                        $('#rowsContainer').empty();
+                        $('#usersTable').DataTable().ajax.reload();
                     } else if (data.statusCode == 204) {
-                        showErrors(data.errors); // Handle validation errors
+                        showErrors(data.errors);
                     } else {
                         Swal.fire({
                             icon: "error",
@@ -466,7 +516,7 @@
                     });
                 }
             });
-            return false; // Prevent default form submission
+            return false;
         }
     </script>
 @endsection

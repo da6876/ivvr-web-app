@@ -135,21 +135,37 @@
                     }
                 },
                 columns: [
-                    {data: 'id'},
-                    {data: 'msr_unit_code'},
-                    {data: 'msr_unit_desc'},
-                    {data: 'status'},
-                    {data: 'create_date'},
+                    {
+                        data: 'id',
+                        render: function (data, type, row,meta) {
+                            return meta.row + 1;
+                        }
+                    },
+                    {
+                        data: 'msr_unit_code',
+                    },
+                    {
+                        data: 'msr_unit_desc',
+                    },
+                    {
+                        data: 'status',
+                        render: function (data, type, row) {
+                            return 'Active';  // Static data for this column (e.g., always "Active")
+                        }
+                    },
+                    {
+                        data: 'create_date',
+                    },
                     {
                         data: null,
                         render: function (data, type, row) {
                             return `
-                            <i class="btn btn-outline-info btn-sm edit-btn bx bxs-edit" data-id="${row.id}"></i>
-                            <i class="btn btn-outline-danger btn-sm delete-btn bx bx-message-square-minus" data-id="${row.id}"></i>
-                        `;
+                <i class="btn btn-outline-info btn-sm edit-btn bx bxs-edit" data-id="${row.id}"></i>
+                <i class="btn btn-outline-danger btn-sm delete-btn bx bx-message-square-minus" data-id="${row.id}"></i>
+            `;
                         },
-                        orderable: false,
-                        searchable: false
+                        orderable: false,  // Disable sorting for the actions column
+                        searchable: false  // Disable searching for the actions column
                     }
                 ],
                 columnDefs: [

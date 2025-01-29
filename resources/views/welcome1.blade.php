@@ -23,10 +23,10 @@
                         <div class="col-md-9">
                             <div class="row">
                                 <div class="col-auto">
-                                    <img src="https://www.bpdb.gov.bd/themes/responsive_npf/img/logo/bpdb.png" alt="BPDB logo" style="max-height: 100px;">
+                                    <img src="{{asset('assets/img/logo.png')}}" alt="BPDB logo" style="max-height: 100px;">
                                 </div>
                                 <div class="col">
-                                    <h1 class="card-title text-white">Information Verification Validation Recognition (IVVR) {{$menuId}}</h1>
+                                    <h1 class="card-title text-white">Bangladesh Power Development Board (BPDB)</h1>
                                 </div>
                             </div>
                         </div>

@@ -19,6 +19,10 @@ class ItemInfoController extends Controller
     {
         return view('itemsetup.ItemInfo.create');
     }
+    public function edit($id)
+    {
+        return view('itemsetup.ItemInfo.edit', [ 'itemID' => $id]);
+    }
     public function store(Request $request){
         try {
 
@@ -31,7 +35,6 @@ class ItemInfoController extends Controller
                     'mjr_cat_id' => 'required',
                     'desc' => 'required',
                     'name' => 'required',
-                    'status' => 'required',
                 ]);
 
                 if ($validator->fails()) {
@@ -46,7 +49,7 @@ class ItemInfoController extends Controller
                     'mjr_cat_id' =>$request->mjr_cat_id,
                     'name' =>$request->name,
                     'desc' =>$request->desc,
-                    'status' =>$request->status,
+                    'status' =>"A",
                     'create_by' => '1',
                 ]);
                 $attributes = json_decode($request->attribute, true);  // `true` makes it return an associative array
@@ -61,18 +64,51 @@ class ItemInfoController extends Controller
                         'attribute_value_ids' => $attribute_value_ids,  // Comma-separated string of attribute_value_ids
                     ]);
                 }
-                /*ItemAttributeInfo::create([
-                    'item_id'=>
-                    'attribute_id'=>
-                    'attribute_value_ids'=>
-                ]);*/
                 return response()->json([
                     "statusCode" => 200,
                     "statusMsg" => "Data Added Successfully"
                 ]);
+            }else{
+                $temInfo = ItemInfo::find($request->id);
+                if (!$temInfo) {
+                    return response()->json([
+                        "statusCode" => 404,
+                        "statusMsg" => "Item not found"
+                    ]);
+                }
+
+                $temInfo->mjr_id = $request->mjr_id;
+                $temInfo->mnr_id = $request->mnr_id;
+                $temInfo->measur_unit_id = $request->measur_unit_id;
+                $temInfo->mjr_cat_id = $request->mjr_cat_id;
+                $temInfo->name = $request->name;
+                $temInfo->desc = $request->desc;
+                $temInfo->save();
+
+                $attributes = json_decode($request->attribute, true);
+                foreach ($attributes as $attribute) {
+                    $attribute_id = $attribute['attribute_ids'];
+                    $attribute_value_ids = implode(',', $attribute['attribute_value_ids']);
+                    $existingAttribute = ItemAttributeInfo::where('item_id', $temInfo->id)
+                        ->where('attribute_id', $attribute_id)
+                        ->first();
+
+                    if ($existingAttribute) {
+                        $existingAttribute->attribute_value_ids = $attribute_value_ids;
+                        $existingAttribute->save();
+                    } else {
+                        ItemAttributeInfo::create([
+                            'item_id' => $temInfo->id,
+                            'attribute_id' => $attribute_id,
+                            'attribute_value_ids' => $attribute_value_ids,
+                        ]);
+                    }
+                }
+                return response()->json([
+                    "statusCode" => 200,
+                    "statusMsg" => "Data Updated Successfully"
+                ]);
             }
-
-
         } catch (\Exception $e) {
             return response()->json([
                 "statusCode" => 400,
@@ -102,8 +138,9 @@ class ItemInfoController extends Controller
     public function show($id)
     {
         try {
-            $singleDataShow = ItemInfo::findOrFail($id);
-            return $singleDataShow;
+            $data['itemMaster'] = ItemInfo::findOrFail($id);
+            $data['itemAttibute'] = ItemAttributeInfo::where('item_id','=',$id)->get();
+            return $data;
         } catch (\Exception $e) {
 
             return response()->json([
@@ -112,37 +149,89 @@ class ItemInfoController extends Controller
             ]);
         }
     }
-    public function getdata(Request $request)
+    public function getData(Request $request)
     {
-        $query = DB::table('item_info as p')
-            ->select('p.id','p.mjr_id', 'p.mnr_id','p.measur_unit_id',
-                'p.mjr_cat_id','p.attribute_ids','p.name','p.desc','p.part_no',
-                'p.status', 'p.create_date')
-            ->where('p.status', '!=', 'D');
+        // Base query
+        $baseQuery = "
+        SELECT
+            ii.id,
+            ii.item_code,
+            ii.name,
+            ii.desc,
+            GROUP_CONCAT(
+                CONCAT('<span class=\"badge bg-label-primary\">', ia.name, '</span> : ', attribute_values_table.attribute_values)
+                ORDER BY ia.name SEPARATOR '</br> '
+            ) AS attributes
+        FROM item_info AS ii
+        JOIN item_attribute_info AS iai ON iai.item_id = ii.id
+        JOIN item_attribute AS ia ON ia.id = iai.attribute_id
+        LEFT JOIN (
+            SELECT
+                iai.attribute_id,
+                GROUP_CONCAT(
+                    CONCAT('<span class=\"badge bg-primary\">', iav.name, '</span>')
+                    ORDER BY iav.name SEPARATOR ', '
+                ) AS attribute_values
+            FROM item_attribute_info AS iai
+            JOIN item_attribute_value AS iav ON iav.id = iai.attribute_value_ids
+            GROUP BY iai.attribute_id
+        ) AS attribute_values_table ON attribute_values_table.attribute_id = ia.id
+        WHERE ii.status != 'D'
+    ";
 
-        $totalCount = $query->count();
-
-        if (!empty($request->name)) {
-            $query->where('item_attribute.name', 'like', '%' . $request->name . '%');
+        // Apply search filters if they are provided
+        $filters = [];
+        if ($request->has('name') && !empty($request->name)) {
+            $filters[] = "ii.name LIKE '%" . $request->name . "%'";
         }
-        if (!empty($request->email)) {
-            $query->where('p.name', 'like', '%' . $request->email . '%');
-        }
-        if (!empty($request->SelectAttribute)) {
-            $query->where('p.attribute_id', 'like', '%' . $request->SelectAttribute . '%');
+        if ($request->has('item_code') && !empty($request->item_code)) {
+            $filters[] = "ii.item_code LIKE '%" . $request->item_code . "%'";
         }
 
-        $filteredCount = $query->count();
+        // Add filters to the query
+        if (!empty($filters)) {
+            $baseQuery .= " AND " . implode(" AND ", $filters);
+        }
+
+        // Apply ordering
         if ($request->has('order')) {
             $orderColumn = $request->columns[$request->order[0]['column']]['data'];
             $orderDirection = $request->order[0]['dir'];
-            $query->orderBy($orderColumn, $orderDirection);
+            $baseQuery .= " ORDER BY $orderColumn $orderDirection";
         }
 
+        // Get the total count for pagination (without GROUP_CONCAT aggregation)
+        $totalCountQuery = "
+        SELECT COUNT(DISTINCT ii.id) AS total_count
+        FROM item_info AS ii
+        JOIN item_attribute_info AS iai ON iai.item_id = ii.id
+        JOIN item_attribute AS ia ON ia.id = iai.attribute_id
+        WHERE ii.status != 'D'
+    ";
+        $totalCount = DB::select($totalCountQuery)[0]->total_count;
+
+        // Get the filtered count for pagination (simplified query without GROUP_CONCAT)
+        $filteredCountQuery = "
+        SELECT COUNT(DISTINCT ii.id) AS filtered_count
+        FROM item_info AS ii
+        JOIN item_attribute_info AS iai ON iai.item_id = ii.id
+        JOIN item_attribute AS ia ON ia.id = iai.attribute_id
+        WHERE ii.status != 'D'
+    ";
+        if (!empty($filters)) {
+            $filteredCountQuery .= " AND " . implode(" AND ", $filters);
+        }
+        $filteredCount = DB::select($filteredCountQuery)[0]->filtered_count;
+
+        // Paginate the result
         $start = $request->input('start');
         $length = $request->input('length');
-        $data = $query->offset($start)->limit($length)->get();
+        $paginatedQuery = $baseQuery . " GROUP BY ii.id, ii.item_code, ii.name, ii.desc LIMIT $length OFFSET $start";
 
+        // Fetch the data
+        $data = DB::select($paginatedQuery);
+
+        // Return the response in JSON format
         return response()->json([
             'draw' => intval($request->draw),
             'recordsTotal' => $totalCount,
@@ -151,6 +240,8 @@ class ItemInfoController extends Controller
             'name' => $request->name,
         ]);
     }
+
+
     public function showItemsDropDown(){
         $ViewType = request()->input('ViewType');
         if ($ViewType == "mjr") {
@@ -198,6 +289,55 @@ class ItemInfoController extends Controller
                     ->where('status', '=', 'N')
                     ->get();
                 return json_encode($st_measure_unit);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return ["o_status_message" => $e->getMessage()];
+            }
+        }
+        elseif($ViewType == "item"){
+            try {
+                $attribute_ids = DB::table('item_info')
+                    ->where('status', '=', 'A')
+                    ->get();
+                return json_encode($attribute_ids);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return ["o_status_message" => $e->getMessage()];
+            }
+        }
+        elseif($ViewType == "attribute_for_item"){
+            try {
+                $item_id = request()->input('item_id');
+
+                $attribute_ids = DB::table('item_attribute as ia')
+                    ->leftJoin('item_attribute_info as iai', 'iai.attribute_id', '=', 'ia.id')
+                    ->where('iai.item_id', '=', $item_id)
+                    ->where('ia.status', '=', 'A')
+                    ->select('ia.id', 'ia.name')
+                    ->get();
+
+                return json_encode($attribute_ids);
+            } catch (\Exception $e) {
+                DB::rollBack();
+                return ["o_status_message" => $e->getMessage()];
+            }
+        }
+        elseif($ViewType == "attribute_value_for_item"){
+            try {
+                $item_id = request()->input('item_id');
+                $attribute_id = request()->input('attribute_id');
+                $attribute_values = DB::table('item_attribute_info as iai')
+                    ->join('item_attribute_value as iav', DB::raw('FIND_IN_SET(iav.id, iai.attribute_value_ids)'), '>', DB::raw('0'))
+                    ->join('item_attribute as ia', 'ia.id', '=', 'iai.attribute_id')
+                    ->where('iai.item_id', '=', $item_id)
+                    ->where('iai.attribute_id', '=', $attribute_id)
+                    ->select(
+                        'iav.id',
+                        'iav.name as name'
+                    )
+                    ->get();
+
+                return json_encode($attribute_values);
             } catch (\Exception $e) {
                 DB::rollBack();
                 return ["o_status_message" => $e->getMessage()];

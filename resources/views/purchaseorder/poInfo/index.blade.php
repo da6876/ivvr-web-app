@@ -1,4 +1,4 @@
-@section('title',"Item Info")
+@section('title',"PO Info")
 @extends('layout.app')
 @section('main')
     <div class="content-wrapper">
@@ -7,8 +7,8 @@
                 <div class="card">
                     <div class="card-body border-bottom">
                         <div class="d-flex justify-content-between align-items-center flex-wrap">
-                            <h6 class="mb-2 mb-md-0 text-uppercase fw-medium">Item Setup > Item Master</h6>
-                            <a class="btn btn-success btn-sm " href="{{url('itemInfo/create')}}"><i
+                            <h6 class=""><span class="text-muted fw-light">Purchase Order /</span> PO Info</h6>
+                            <a class="btn btn-success btn-sm " href="{{url('purchaseOrder/create')}}"><i
                                     class="typcn typcn-plus"></i> Add New
                             </a>
 
@@ -17,14 +17,12 @@
                     <div class="card-body">
                         <div class="table-responsive pt-3">
                             <div>
-                                <form id="filterForm">
+                                <form id="filterForm" style="margin-left: 30px">
                                     @csrf
-                                    <div class="row">
+                                    <div class="row mb-3">
                                         <div class="col-md-6">
                                             <div class="form-group">
-                                                <input type="text" id="name" name="name"
-                                                       class="form-control form-control-sm"
-                                                       placeholder="Enter Mjr Code For Search" aria-label="Username">
+                                                <input type="text" id="name" name="name" class="form-control form-control-sm" placeholder="Enter Mjr Code For Search" aria-label="Username">
                                             </div>
                                         </div>
                                         <div class="col-md-6">
@@ -40,10 +38,10 @@
                             <table id="usersTable" class="table table-bordered">
                                 <thead>
                                 <tr>
-                                    <th>Item Code</th>
-                                    <th>Name</th>
-                                    <th>Desc</th>
-                                    <th>Attributes Info</th>
+                                    <th>Purchase Order No</th>
+                                    <th>Purchase Order Date</th>
+                                    <th>LC Number</th>
+                                    <th>Authorization Status</th>
                                     <th>Action</th>
                                 </tr>
                                 </thead>
@@ -68,28 +66,25 @@
                 processing: true,
                 serverSide: true,
                 ajax: {
-                    url: '{{ route('itemInfo.data') }}',
+                    url: '{{ route('purchaseOrder.data') }}',
                     type: 'POST',
                     data: function (d) {
                         d._token = $('input[name="_token"]').val(); // Include CSRF token
                         d.name = $('input[name="name"]').val();
-                        d.email = $('input[name="email"]').val();
                     }
                 },
                 columns: [
-                    { data: 'item_code' },
-                    { data: 'name' },
-                    { data: 'desc' },
-                    {
-                        data: 'attributes'
-                    },
+                    { data: 'purchase_order_no' },
+                    { data: 'purchase_order_date' },
+                    { data: 'lc_number' },
+                    { data: 'authorization' },
                     {
                         data: null,
                         render: function (data, type, row) {
                             return `
-                <i class="btn btn-outline-info btn-sm edit-btn bx bxs-edit edit-btn" data-id="${row.id}"></i>
-                <i class="btn btn-outline-danger btn-sm delete-btn bx bx-message-square-minus delete-btn" data-id="${row.id}"></i>
-            `;
+                    <i class="btn btn-outline-info btn-sm edit-btn bx bxs-edit edit-btn" data-id="${row.id}"></i>
+                    <i class="btn btn-outline-danger btn-sm delete-btn bx bx-message-square-minus delete-btn" data-id="${row.id}"></i>
+                `;
                         },
                         orderable: false,
                         searchable: false
@@ -99,12 +94,13 @@
                     {
                         targets: 4,
                         render: function (data, type, row) {
-                            return data ? new Date(data).toLocaleString('en-GB', {timeZone: 'Asia/Dhaka'}) : 'N/A';
+                            return data ? new Date(data).toLocaleString('en-GB', { timeZone: 'Asia/Dhaka' }) : 'N/A';
                         }
                     }
                 ],
                 lengthMenu: [[10, 25, 50, -1], [10, 25, 50, "All"]],
-                pageLength: 10
+                pageLength: 10,
+                dom: 'rtip' // Remove search bar and "Show X entries" dropdown
             });
 
             $('#usersTable tbody').on('click', '.edit-btn', function () {
@@ -144,7 +140,7 @@
 
                         // Send the delete request to the server
                         $.ajax({
-                            url: "{{ url('itemInfo') }}" + '/' + id,
+                            url: "{{ url('purchaseOrder') }}" + '/' + id,
                             type: "POST",
                             data: {
                                 '_method': 'DELETE',
@@ -189,7 +185,7 @@
 
         });
         function showData(id) {
-            var url = "{{ route('itemInfo.edit', ':id') }}";
+            var url = "{{ route('purchaseOrder.edit', ':id') }}";
             url = url.replace(':id', id);
             window.location.href = url;
         }

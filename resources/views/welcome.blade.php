@@ -31,10 +31,10 @@
                         <div class="col-md-9">
                             <div class="row">
                                 <div class="col-auto">
-                                    <img src="https://www.bpdb.gov.bd/themes/responsive_npf/img/logo/bpdb.png" alt="BPDB logo" style="max-height: 100px;">
+                                    <img src="{{asset('assets/img/logo.png')}}" alt="BPDB logo" style="max-height: 100px;">
                                 </div>
                                 <div class="col">
-                                    <h1 class="card-title text-white">Information Verification Validation Recognition (IVVR)</h1>
+                                    <h1 class="card-title text-white">Bangladesh Power Development Board (BPDB)</h1>
                                 </div>
                             </div>
                         </div>
@@ -52,8 +52,7 @@
                             <div class="col-lg-3 col-sm-6 text-center mt-3">
                                 <div class="custom-card card border border-primary text-center" style="width: 14rem; height:14rem; cursor: pointer;">
                                     <div class="card-body d-flex flex-column justify-content-center align-items-center">
-                                        <h3>{{ $menuItem['title'] }}</h3>
-                                        <h5 class="card-text">{{ $menuItem['title'] }}</h5>
+                                        <h3 class="text-uppercase">{{ $menuItem['title'] }}</h3>
                                         <a href="{{ $menuItem['url'] }}/{{ $menuItem['id'] }}" class="btn btn-primary">View</a>
 
                                     </div>
