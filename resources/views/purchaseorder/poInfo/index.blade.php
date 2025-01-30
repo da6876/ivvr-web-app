@@ -130,11 +130,15 @@
                     {
                         data: null,
                         render: function (data, type, row) {
-                            return `
+                            if(row.authorization=='Pending'){
+                                return `
                                     <button class="btn btn-outline-info btn-sm view-btn" data-id="${row.id}"><i class='bx bx-list-ul'></i> View Details</button>
                                     <i class="btn btn-outline-info btn-sm edit-btn bx bxs-edit" data-id="${row.id}"></i>
-                                    <i class="btn btn-outline-danger btn-sm delete-btn bx bx-message-square-minus delete-btn" data-id="${row.id}"></i>
-                                `;
+                                    <i class="btn btn-outline-danger btn-sm delete-btn bx bx-message-square-minus delete-btn" data-id="${row.id}"></i>`;
+                            }else{
+                                return `<button class="btn btn-outline-info btn-sm view-btn" data-id="${row.id}"><i class='bx bx-list-ul'></i> View Details</button>`;
+                            }
+
                         },
                         orderable: false,
                         searchable: false

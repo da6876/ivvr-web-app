@@ -23,7 +23,7 @@ class PurchaseOrderController extends Controller
     }
     public function edit($id)
     {
-        return view('purchaseorder.poInfo.edit', [ 'itemID' => $id]);
+        return view('purchaseorder.poInfo.edit', [ 'poId' => $id]);
     }
     public function store(Request $request){
         try {
@@ -58,6 +58,7 @@ class PurchaseOrderController extends Controller
                     'origin' =>$request->origin,
                     'supplier_id' =>$request->supplier_id,
                     'consignee_id' =>$request->consignee_id,
+                    'cost_type' =>$request->cost_type,
                     'department_id' =>$request->department_id,
                     'authorization' =>"Pending",
                     'status' =>"A",
@@ -129,7 +130,6 @@ class PurchaseOrderController extends Controller
     public function show($id)
     {
         try {
-
             $data['poMaster'] = PurchaseOrder::findOrFail($id);
             $data['poDetails'] = PurchaseOrderDtl::where('purchase_order_id','=',$id)->get();
             return $data;

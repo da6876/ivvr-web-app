@@ -307,52 +307,17 @@
                                         <tr class="text-nowrap">
                                             <th>#</th>
                                             <th>Item , Attribute,Attribute Value</th>
-                                            <th>Currency</th>
+                                            <th>Select Currency</th>
                                             <th>Conv. Rate</th>
                                             <th>Unit Cost</th>
-                                            <th>Qty</th>
-                                            <th>Vat</th>
-                                            <th>ATC</th>
+                                            <th>Total Qty</th>
+                                            <th>Vat Amount</th>
+                                            <th>ATC Amount</th>
                                             <th>Item Cost</th>
                                         </tr>
                                         </thead>
                                         <tbody id="rowsContainer">
-                                        <tr class="dynamic-row">
-                                            <td><button class="btn btn-sm btn-outline-danger remove-row "><i class="bx bx-trash"></i></button></td>
-                                            <td>
-                                                <div class="form-group">
-                                                    <input type="hidden" id="itemIDs" name="itemIDs[]"/>
-                                                    <input type="hidden" id="attributes" name="attributes[]"/>
-                                                    <input type="hidden" id="attributeValues" name="attributeValues[]"/>
 
-                                                    <textarea type="text" class="form-control" name="itemdetailsTextArea[]" id="itemdetailsTextArea">Item : Item Name, Size : Item Size, Capacity : Item Capacity</textarea>
-                                                    <input type="button" class="mt-1 btn btn-outline-info btn-sm addAttributes" value="Select Item Attribute & Values">
-                                                </div>
-                                            </td>
-
-                                            <td>
-                                                <div class="form-group">
-                                                    <select class="form-control select2 cur_code" id="cur_code" name="cur_code[]">
-                                                        <option value="">Select</option>
-                                                        <option value="0001">Taka</option>
-                                                        <option value="0002">USD</option>
-                                                        <option value="0003">Pound</option>
-                                                        <option value="0004">Frunk</option>
-                                                        <option value="0005">EURO</option>
-                                                        <option value="0006">Kuwaiti Dinar</option>
-                                                        <option value="0007">HONG KONG DOLLAR</option>
-                                                        <option value="0008">YEN</option>
-                                                        <option value="0009">INR</option>
-                                                    </select>
-                                                </div>
-                                            </td>
-                                            <td><input type="number" class="form-control" name="con_rate[]" value="0" id="con_rate" placeholder="Qty"></td>
-                                            <td><input type="number" class="form-control" name="unit_cost[]" value="0" id="unit_cost" placeholder="Unit Cost"></td>
-                                            <td><input type="number" class="form-control" name="qunty[]" value="0" id="qunty" placeholder="Quantity"></td>
-                                            <td><input type="number" class="form-control" name="vat[]" value="0" id="vat" placeholder="VAT"></td>
-                                            <td><input type="number" class="form-control" name="atc[]" value="0" id="atc" placeholder="ATC"></td>
-                                            <td><input type="number" class="form-control" name="item_cost[]" value="0" id="item_cost" placeholder="item cost"></td>
-                                        </tr>
                                         </tbody>
                                         <tfoot>
                                         <tr>
@@ -436,7 +401,88 @@
 
 @endsection
 @section('script')
+    <script>
+        var poId = "{{$poId}}";
+        $.ajax({
+            url: "{{ url('purchaseOrder') }}" + '/' + poId,
+            type: "GET",
+            dataType: "JSON",
+            success: function (data) {
+                $('#id').val(data.poMaster.id);
+                $('#purchase_order_no').val(data.poMaster.purchase_order_no);
+                $('#purchase_order_date').val(data.poMaster.purchase_order_date);
+                $('#lc_number').val(data.poMaster.lc_number);
+                $('#lc_date').val(data.poMaster.lc_date);
+                $('#lc_bank_id').val(data.poMaster.lc_bank_id).trigger('change');
+                $('#supplier_id').val(data.poMaster.supplier_id).trigger('change');
+                $('#consignee_id').val(data.poMaster.consignee_id).trigger('change');
+                $('#department_id').val(data.poMaster.department_id).trigger('change');
+                $('#purchase_type').val(data.poMaster.purchase_type).trigger('change');
+                $('#cost_type').val(data.poMaster.cost_type).trigger('change');
+                $('#store').val(data.poMaster.store).trigger('change');
+                $('#origin').val(data.poMaster.origin).trigger('change');
 
+                // Iterate through itemAttributes and create rows accordingly
+                data.poDetails.forEach(function(attributeData) {
+                    var newRow = `
+                        <tr class="dynamic-row">
+                            <td><button class="btn btn-sm btn-outline-danger remove-row "><i class="bx bx-trash"></i></button></td>
+                            <td>
+                                <div class="form-group">
+                                    <input type="hidden" id="itemIDs" name="itemIDs[]"/>
+                                    <input type="hidden" id="attributes" name="attributes[]"/>
+                                    <input type="hidden" id="attributeValues" name="attributeValues[]"/>
+
+                                    <textarea type="text" class="form-control" name="itemdetailsTextArea[]" id="itemdetailsTextArea">Item : Item Name, Size : Item Size, Capacity : Item Capacity</textarea>
+                                    <input type="button" class="mt-1 btn btn-outline-info btn-sm addAttributes" value="Select Item Attribute & Values">
+                                </div>
+                            </td>
+
+                            <td>
+                                <div class="form-group">
+                                    <select class="form-control select2 cur_code" id="cur_code" name="cur_code[]">
+                                        <option value="">Select</option>
+                                        <option value="0001">Taka</option>
+                                        <option value="0002">USD</option>
+                                        <option value="0003">Pound</option>
+                                        <option value="0004">Frunk</option>
+                                        <option value="0005">EURO</option>
+                                        <option value="0006">Kuwaiti Dinar</option>
+                                        <option value="0007">HONG KONG DOLLAR</option>
+                                        <option value="0008">YEN</option>
+                                        <option value="0009">INR</option>
+                                    </select>
+                                </div>
+                            </td>
+                            <td><input type="number" class="form-control" name="con_rate[]" value="0" id="con_rate" placeholder="Qty"></td>
+                            <td><input type="number" class="form-control" name="unit_cost[]" value="0" id="unit_cost" placeholder="Unit Cost"></td>
+                            <td><input type="number" class="form-control" name="qunty[]" value="0" id="qunty" placeholder="Quantity"></td>
+                            <td><input type="number" class="form-control" name="vat[]" value="0" id="vat" placeholder="VAT"></td>
+                            <td><input type="number" class="form-control" name="atc[]" value="0" id="atc" placeholder="ATC"></td>
+                            <td><input type="number" class="form-control" name="item_cost[]" value="0" id="item_cost" placeholder="item cost"></td>
+                        </tr>`;
+                    $('#rowsContainer').append(newRow);
+
+                    // Load attributes and values for this row
+                    loadAttributes($('#rowsContainer .dynamic-row:last .attribute_ids'), attributeData.attribute_id);
+                    loadAttributeValues(attributeData.attribute_id, $('#rowsContainer .dynamic-row:last .attribute_value_ids'), attributeData.attribute_value_ids);
+                    $('#rowsContainer .dynamic-row:last .select2').select2();
+                    $('#rowsContainer .dynamic-row:last #button-addon2').on('click', function() {
+                        addAttributeValue($(this).closest('tr'));
+                    });
+                });
+            },
+            error: function () {
+                swal({
+                    title: "Oops",
+                    text: "Error Occurred while loading item data.",
+                    icon: "error",
+                    timer: 1500
+                });
+                hideLoading();
+            }
+        });
+    </script>
     <script>
         var urlss = "{{ url('showItemsDropDown') }}";
         var csrf_tokens = "{{ csrf_token() }}";
