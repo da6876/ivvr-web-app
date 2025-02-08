@@ -75,8 +75,6 @@
                                 <th>Rate</th>
                                 <th>Quantity</th>
                                 <th>Conversion Rate</th>
-                                <th>VAT</th>
-                                <th>ATC</th>
                                 <th>Total Amount</th>
                             </tr>
                             </thead>
@@ -324,7 +322,7 @@
                             }
                             return detail; // In case there's no `:` to split
                         }).join('<br>'); // Join the formatted parts with a <br> tag instead of a comma
-                        var totalAmount = (parseFloat(item.rate) * parseFloat(item.qunty) * parseFloat(item.con_rate)) + (parseFloat(item.vat) + parseFloat(item.atc));
+                        var totalAmount = (parseFloat(item.rate) * parseFloat(item.qunty) * parseFloat(item.con_rate));
                         var row = `<tr>
                                         <th scope="row">${index + 1}</th>
                                         <td>${item.item_name}</td>
@@ -332,8 +330,6 @@
                                         <td>${item.rate}</td>
                                         <td>${item.qunty}</td>
                                         <td>${item.con_rate}</td>
-                                        <td>${item.vat}</td>
-                                        <td>${item.atc}</td>
                                         <td>${totalAmount.toFixed(2)}</td>
                                     </tr>`;
                         $('#exLargeModal .table tbody').append(row);

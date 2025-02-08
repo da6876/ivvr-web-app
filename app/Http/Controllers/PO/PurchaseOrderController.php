@@ -41,6 +41,13 @@ class PurchaseOrderController extends Controller
                     'origin' => 'required',
                     'supplier_id' => 'required',
                     'consignee_id' => 'required',
+                    'vat' => 'required',
+                    'tax' => 'required',
+                    'transportation' => 'required',
+                    'freight' => 'required',
+                    'installation' => 'required',
+                    'other' => 'required',
+                    'discount' => 'required',
                 ]);
 
                 if ($validator->fails()) {
@@ -60,27 +67,38 @@ class PurchaseOrderController extends Controller
                     'consignee_id' =>$request->consignee_id,
                     'cost_type' =>$request->cost_type,
                     'department_id' =>$request->department_id,
+                    'vat' =>$request->vat,
+                    'tax' =>$request->tax,
+                    'transportation' =>$request->transportation,
+                    'freight' =>$request->freight,
+                    'installation' =>$request->installation,
+                    'other' =>$request->other,
+                    'discount' =>$request->discount,
                     'authorization' =>"Pending",
                     'status' =>"A",
                     'create_by' => '1',
                 ]);
                 $itemDetailsInfo = json_decode($request->itemDetailsInfo, true);
                 foreach ($itemDetailsInfo as $rowData) {
-
+                    if (is_string($rowData['attributeValues'])) {
+                        $attributeValues = implode(',', array_map('trim', explode(',', $rowData['attributeValues'])));
+                    } elseif (is_array($rowData['attributeValues'])) {
+                        $attributeValues = implode(',', $rowData['attributeValues']);
+                    } else {
+                        $attributeValues = '';
+                    }
                     PurchaseOrderDtl::create([
                         'purchase_order_id' => $purchaseOrder->id,
                         'item_id' => $rowData['itemID'],
                         'attribute_id' => $rowData['attributes'],
-                        'attribute_values_id' => $rowData['attributeValues'],
+                        'attribute_values_id' => $attributeValues,
                         'rate' => $rowData['con_rate'],
                         'qunty' => $rowData['qunty'],
                         'cur_code' => $rowData['cur_code'],
                         'unit_cost' => $rowData['unit_cost'],
                         'con_rate' => $rowData['con_rate'],
-                        'vat' => $rowData['vat'],
-                        'atc' => $rowData['atc'],
                         'remark' => 'N/A',
-                        'status' =>"A",
+                        'status' => "A",
                         'create_by' => '1',
                     ]);
                 }
@@ -182,9 +200,7 @@ class PurchaseOrderController extends Controller
                     'p.qunty',
                     'p.cur_code',
                     'p.con_rate',
-                    'p.unit_cost',
-                    'p.vat',
-                    'p.atc'
+                    'p.unit_cost'
                 )
                 ->where('p.purchase_order_id', '=', $id)
                 ->groupBy(
@@ -195,9 +211,7 @@ class PurchaseOrderController extends Controller
                     'p.qunty',
                     'p.cur_code',
                     'p.con_rate',
-                    'p.unit_cost',
-                    'p.vat',
-                    'p.atc'
+                    'p.unit_cost'
                 )
                 ->get();
             return $query;
@@ -215,7 +229,8 @@ class PurchaseOrderController extends Controller
     {
         $query = DB::table('purchase_order_mst as p')
             ->select('p.id','p.purchase_order_no', 'p.purchase_order_date', 'p.lc_number','p.authorization')
-            ->where('p.status', '!=', 'D');
+            ->where('p.status', '!=', 'D')
+            ->orderBy('p.id','desc');
         $totalCount = $query->count();
         if (!empty($request->name)) {
             $query->where('p.purchase_order_no', 'like', '%' . $request->name . '%');

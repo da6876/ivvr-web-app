@@ -16,6 +16,7 @@ class PurchaseOrder extends Model
         'id','purchase_order_no', 'purchase_order_date', 'lc_bank_id', 'lc_number', 'lc_date',
         'purchase_type','cost_type','store','origin',
         'supplier_id','consignee_id','department_id','authorization',
+        'vat','tax','transportation','freight','installation','other','discount',
         'status', 'create_by', 'create_date', 'update_by', 'update_date',
     ];
 

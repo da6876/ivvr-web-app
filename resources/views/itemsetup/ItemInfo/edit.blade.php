@@ -1,4 +1,4 @@
-@section('title',"Item Create")
+@section('title',"Item Edit")
 @extends('layout.app')
 @section('style')
     <style>
@@ -55,7 +55,7 @@
                                 <h4>Processing Please Wait</h4>
                             </div>
                         </div>
-                        <h4 class="card-title">Item Create</h4>
+                        <h4 class="card-title">Item Edit</h4>
                         <p class="card-description">
                             Basic form elements
                         </p>

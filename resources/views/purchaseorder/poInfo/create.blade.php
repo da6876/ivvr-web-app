@@ -5,7 +5,10 @@
         .select2-container .select2-selection--single {
             height: 40px;
             line-height: 40px;
-
+        }
+        .select2-container .select2-selection--single .cur_code {
+            height: 40px;
+            line-height: 40px;
         }
         .select2-container .select2-selection--single .select2-selection__rendered {
             padding: 8px;
@@ -21,6 +24,15 @@
             border: 1px solid #68b664 !important;
             border-radius: 4px !important;
         }
+         .resizable-input {
+             min-width: 100px;
+             max-width: 500px;
+             padding: 5px;
+         }
+        .form-control-text-area {
+            resize: none;  /* Prevent manual resizing */
+            overflow: hidden;  /* Hide scrollbars */
+        }
     </style>
 @endsection
 @section('main')
@@ -29,29 +41,33 @@
             <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body" id="itemDataAdd">
-                        <h4 class="card-title">Item Create</h4>
+                        <h4 class="card-title">PO Create</h4>
                         <p class="card-description">
                             Basic form elements
                         </p>
                         <form class="forms-sample">@csrf
                             <div class="row">
                                 <div class="col m-1">
-                                    <label class="form-label" for="purchase_order_no">Purchase Order No</label>
-                                    <input type="text" class="form-control" name="purchase_order_no" id="purchase_order_no" placeholder="John Doe" />
+                                    <label class="form-label" for="purchase_order_no">PO No</label>
+                                    <input type="text" class="form-control" name="purchase_order_no" id="purchase_order_no" placeholder="Enter PO Number" />
                                 </div>
                                 <div class="col m-1">
-                                    <label class="form-label" for="purchase_order_date">Purchase Order Date</label>
+                                    <label class="form-label" for="purchase_order_date">PO Date</label>
                                     <input type="text" class="form-control" name="purchase_order_date" id="purchase_order_date" placeholder="ACME Inc." />
+                                </div>
+                                <div class="col m-1">
+                                    <label for="origin">PO Origin</label>
+                                    <select class="form-control select2" name="origin" id="origin">
+                                        <option value="">Select Purchase Order Origin</option>
+                                        <option value="F">Foreign</option>
+                                        <option value="L">Local</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col m-1">
                                     <label class="form-label" for="lc_number">LC Number</label>
                                     <input type="text" class="form-control" name="lc_number" id="lc_number" placeholder="John Doe" />
-                                </div>
-                                <div class="col m-1">
-                                    <label class="form-label" for="lc_date">LC Date</label>
-                                    <input type="text" class="form-control" name="lc_date" id="lc_date" placeholder="ACME Inc." />
                                 </div>
                                 <div class="col m-1">
                                     <label class="form-label" for="lc_bank_id">LC Bank Name</label>
@@ -73,28 +89,26 @@
                                         <option value="14">Shahjalal Islami Bank Limited</option>
                                     </select>
                                 </div>
+                                <div class="col m-1">
+                                    <label class="form-label" for="lc_date">LC Date</label>
+                                    <input type="text" class="form-control" name="lc_date" id="lc_date" placeholder="ACME Inc." />
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col m-1">
-                                    <label for="supplier_id">Supplier</label>
-                                    <select class="form-control select2" name="supplier_id" id="supplier_id">
-                                        <option value="">Select Supplier</option>
-                                        <option value="000011">joint Venture of Shenzhen inhemeter,co.Ltd</option>
-                                        <option value="000012">M/S. Powermann Bangladesh Ltd</option>
-                                        <option value="000013">M/S. REVERIE POWER &amp; AUTOMATION ENGINEERING LTD</option>
-                                        <option value="000123">M/S Khan Brothers International, KBG</option>
-                                        <option value="000174">Shikalbaha 60 MW Power Station,BPDB,Ctg.</option>
-                                        <option value="000175">Meghna Petroleum Limited</option>
-                                        <option value="000176">M/S Ideal Electrical Enterprise Ltd.</option>
-                                        <option value="000177">Kamal &amp; Brothers, Vill &amp; Post. Shikalbaha, P.S. Karnaphuli, Chattagram.</option>
-                                        <option value="000178">M/s Nur-A-Mashruf</option>
-                                        <option value="000179">Shonali Electric, Agrabad, Chattogram.</option>
-                                        <option value="000180">M/S. Rubel Automobiles, &amp; Workshop, 161, Sk. Mujib Road, Barik Building,Chattogram.</option>
-                                        <option value="000181">M/S. Progressive Engineering &amp; Construction Co. Ltd. 17/2, Eskaton Garden Road, Dhaka-1000.</option>
-                                        <option value="000182">M/s. Safety Power, 142/3, Arambagh (1st Floor), Motijheel, Dhaka-1000, Bangladesh</option>
-                                        <option value="000183">Multistar Technologies,Lorna office complex, 94/A New Eskaton road, Dhaka.</option>
-                                        <option value="000184">FLORA LIMITED, Chattogram.</option>
-                                        <option value="000185">Chowdhury Motors, 314, Sk. Mujib Road, Chattogram.</option>
+                                    <label for="cost_type">Cost Type</label>
+                                    <select class="form-control select2" name="cost_type" id="cost_type">
+                                        <option value="">Select Cost Type</option>
+                                        <option value="P">Purchase Cost</option>
+                                        <option value="T">Transportation Cost</option>
+                                        <option value="O">Other Cost</option>
+                                    </select>
+                                </div>
+                                <div class="col m-1">
+                                    <label for="store">Store</label>
+                                    <select class="form-control select2" name="store" id="store">
+                                        <option value="">Select Store</option>
+                                        <option value="L168">IVVR Project, Phase II, BPDB, Dhaka</option>
                                     </select>
                                 </div>
                                 <div class="col m-1">
@@ -253,15 +267,37 @@
                                         <option value="429">Khulna Power Station</option>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="col m-1">
+                                    <label for="supplier_id">Supplier</label>
+                                    <select class="form-control select2" name="supplier_id" id="supplier_id">
+                                        <option value="">Select Supplier</option>
+                                        <option value="000011">joint Venture of Shenzhen inhemeter,co.Ltd</option>
+                                        <option value="000012">M/S. Powermann Bangladesh Ltd</option>
+                                        <option value="000013">M/S. REVERIE POWER &amp; AUTOMATION ENGINEERING LTD</option>
+                                        <option value="000123">M/S Khan Brothers International, KBG</option>
+                                        <option value="000174">Shikalbaha 60 MW Power Station,BPDB,Ctg.</option>
+                                        <option value="000175">Meghna Petroleum Limited</option>
+                                        <option value="000176">M/S Ideal Electrical Enterprise Ltd.</option>
+                                        <option value="000177">Kamal &amp; Brothers, Vill &amp; Post. Shikalbaha, P.S. Karnaphuli, Chattagram.</option>
+                                        <option value="000178">M/s Nur-A-Mashruf</option>
+                                        <option value="000179">Shonali Electric, Agrabad, Chattogram.</option>
+                                        <option value="000180">M/S. Rubel Automobiles, &amp; Workshop, 161, Sk. Mujib Road, Barik Building,Chattogram.</option>
+                                        <option value="000181">M/S. Progressive Engineering &amp; Construction Co. Ltd. 17/2, Eskaton Garden Road, Dhaka-1000.</option>
+                                        <option value="000182">M/s. Safety Power, 142/3, Arambagh (1st Floor), Motijheel, Dhaka-1000, Bangladesh</option>
+                                        <option value="000183">Multistar Technologies,Lorna office complex, 94/A New Eskaton road, Dhaka.</option>
+                                        <option value="000184">FLORA LIMITED, Chattogram.</option>
+                                        <option value="000185">Chowdhury Motors, 314, Sk. Mujib Road, Chattogram.</option>
+                                    </select>
+                                </div>
                                 <div class="col m-1">
                                     <label for="department_id">Department</label>
                                     <select class="form-control select2" name="department_id" id="department_id">
                                     </select>
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col m-1">
-                                    <label for="purchase_type">Purchase Type</label>
+                                    <label for="purchase_type">PO Type</label>
                                     <select class="form-control select2" name="purchase_type" id="purchase_type">
                                         <option value="">Select Purchase Type</option>
                                         <option value="OT">Open Tendering Method</option>
@@ -273,51 +309,77 @@
                                         <option value="OH">Others</option>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col m-1">
-                                    <label for="cost_type">Cost Type</label>
-                                    <select class="form-control select2" name="cost_type" id="cost_type">
-                                        <option value="">Select Cost Type</option>
-                                        <option value="P">Purchase Cost</option>
-                                        <option value="T">Transportation Cost</option>
-                                        <option value="O">Other Cost</option>
-                                    </select>
+                                    <label class="form-label" for="vat">VAT</label>
+                                    <input type="number" class="form-control" value="0" name="vat" id="vat" placeholder="Enter VAT Amount" />
                                 </div>
                                 <div class="col m-1">
-                                    <label for="store">Store</label>
-                                    <select class="form-control select2" name="store" id="store">
-                                        <option value="">Select Store</option>
-                                        <option value="L168">IVVR Project, Phase II, BPDB, Dhaka</option>
-                                    </select>
+                                    <label class="form-label" for="tax">Tax</label>
+                                    <input type="number" class="form-control" value="0" name="tax" id="tax" placeholder="Enter Tax Amount" />
                                 </div>
                                 <div class="col m-1">
-                                    <label for="origin">Purchase Order Origin</label>
-                                    <select class="form-control select2" name="origin" id="origin">
-                                        <option value="">Select Purchase Order Origin</option>
-                                        <option value="F">Foreign</option>
-                                        <option value="L">Local</option>
-                                    </select>
+                                    <label class="form-label" for="transportation">Transportation</label>
+                                    <input type="number" class="form-control" value="0" name="transportation" id="transportation" placeholder="Enter Transportation Amount" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col m-1">
+                                    <label class="form-label" for="freight">Freight</label>
+                                    <input type="number" class="form-control" value="0" name="freight" id="freight" placeholder="Enter Freight Amount" />
+                                </div>
+                                <div class="col m-1">
+                                    <label class="form-label" for="installation">Installation</label>
+                                    <input type="number" class="form-control" value="0" name="installation" id="installation" placeholder="Enter Installation Amount" />
+                                </div>
+                                <div class="col m-1">
+                                    <label class="form-label" for="other">Other</label>
+                                    <input type="number" class="form-control" value="0" name="other" id="other" placeholder="Enter Other Amount" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col m-1">
+                                    <label class="form-label" for="discount">Discount</label>
+                                    <input type="number" class="form-control" value="0" name="discount" id="discount" placeholder="Enter Discount Amount" />
+                                </div>
+                                <div class="col m-1">
+                                </div>
+                                <div class="col m-1">
+                                </div>
+                                <div class="col m-1">
                                 </div>
                             </div>
 
                             <div class="form-group table-responsive" id="itemSpack">
-                                <label for="origin">PO Item Details</label>
+                                <h5 class="mt-3 card-description">
+                                    PO Item Details
+                                </h5>
                                 <div class="table-responsive text-nowrap">
-                                    <table id="usersTables" class="table">
+                                    <table id="usersTables" class="table table-bordered">
                                         <thead>
                                         <tr class="text-nowrap">
                                             <th>#</th>
-                                            <th>Item , Attribute,Attribute Value</th>
-                                            <th>Currency</th>
+                                            <th>Item Description, Attribute,Attribute Value</th>
+                                            <th>Select MS. Unit</th>
+                                            <th>Select Currency</th>
                                             <th>Conv. Rate</th>
                                             <th>Unit Cost</th>
-                                            <th>Qty</th>
-                                            <th>Vat</th>
-                                            <th>ATC</th>
-                                            <th>Item Cost</th>
+                                            <th>Total Qty</th>
+                                            <th>Amount Total</th>
+                                            <th>VAT Amount</th>
+                                            <th>Tax Amount</th>
+                                            <th>Transportation</th>
+                                            <th>Freight Amount</th>
+                                            <th>Installation</th>
+                                            <th>Other Amount</th>
+                                            <th>Discount Amount</th>
+                                            <th>Item Total Cost</th>
+                                            <th>Total Amount (BDT)</th>
                                         </tr>
                                         </thead>
                                         <tbody id="rowsContainer">
-                                        <tr class="dynamic-row">
+                                        {{--<tr class="dynamic-row">
                                             <td><button class="btn btn-sm btn-outline-danger remove-row "><i class="bx bx-trash"></i></button></td>
                                             <td>
                                                 <div class="form-group">
@@ -325,14 +387,13 @@
                                                     <input type="hidden" id="attributes" name="attributes[]"/>
                                                     <input type="hidden" id="attributeValues" name="attributeValues[]"/>
 
-                                                    <textarea type="text" class="form-control" name="itemdetailsTextArea[]" id="itemdetailsTextArea">Item : Item Name, Size : Item Size, Capacity : Item Capacity</textarea>
+                                                    <textarea oninput="autoResize(this)" type="text"readonly class="form-control form-control-text-area" name="itemdetailsTextArea[]" id="itemdetailsTextArea">Item : Item Name, Size : Item Size, Capacity : Item Capacity</textarea>
                                                     <input type="button" class="mt-1 btn btn-outline-info btn-sm addAttributes" value="Select Item Attribute & Values">
                                                 </div>
                                             </td>
-
                                             <td>
                                                 <div class="form-group">
-                                                    <select class="form-control select2 cur_code" id="cur_code" name="cur_code[]">
+                                                    <select class="form-control select2 cur_code1 resizable-select" id="cur_code1" name="cur_code1[]">
                                                         <option value="">Select</option>
                                                         <option value="0001">Taka</option>
                                                         <option value="0002">USD</option>
@@ -346,13 +407,36 @@
                                                     </select>
                                                 </div>
                                             </td>
-                                            <td><input type="number" class="form-control" name="con_rate[]" value="0" id="con_rate" placeholder="Qty"></td>
-                                            <td><input type="number" class="form-control" name="unit_cost[]" value="0" id="unit_cost" placeholder="Unit Cost"></td>
-                                            <td><input type="number" class="form-control" name="qunty[]" value="0" id="qunty" placeholder="Quantity"></td>
-                                            <td><input type="number" class="form-control" name="vat[]" value="0" id="vat" placeholder="VAT"></td>
-                                            <td><input type="number" class="form-control" name="atc[]" value="0" id="atc" placeholder="ATC"></td>
-                                            <td><input type="number" class="form-control" name="item_cost[]" value="0" id="item_cost" placeholder="item cost"></td>
-                                        </tr>
+                                            <td>
+                                                <div class="form-group">
+                                                    <select class="form-control select2 cur_code resizable-select" id="cur_code" name="cur_code[]">
+                                                        <option value="">Select</option>
+                                                        <option value="0001">Taka</option>
+                                                        <option value="0002">USD</option>
+                                                        <option value="0003">Pound</option>
+                                                        <option value="0004">Frunk</option>
+                                                        <option value="0005">EURO</option>
+                                                        <option value="0006">Kuwaiti Dinar</option>
+                                                        <option value="0007">HONG KONG DOLLAR</option>
+                                                        <option value="0008">YEN</option>
+                                                        <option value="0009">INR</option>
+                                                    </select>
+                                                </div>
+                                            </td>
+                                            <td><input type="number" class="form-control resizable-input" name="con_rate[]" value="0" min="0" id="con_rate"  oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="unit_cost[]" value="0" min="0"  id="unit_cost" oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="qunty[]" value="0" min="0"  id="qunty" oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="amountTotal[]" value="0" min="0"  id="amountTotal" readonly oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="vat[]" value="0" min="0"  id="vat" readonly oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="tax[]" value="0" min="0"  id="tax" readonly oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="transportation[]" value="0" min="0"  id="transportation" readonly oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="freight[]" value="0" min="0"  id="freight" readonly oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="installation[]" value="0" min="0"  id="installation" readonly oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="other[]" value="0" min="0"  id="other" readonly oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="discount[]" value="0" min="0"  id="discount" readonly oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="item_total_cost[]" value="0" min="0"  id="item_total_cost" readonly oninput="resizeInput(this)"></td>
+                                            <td><input type="number" class="form-control resizable-input" name="item_total_cost_bdt[]" value="0" min="0"  id="item_total_cost_bdt" readonly oninput="resizeInput(this)"></td>
+                                        </tr>--}}
                                         </tbody>
                                         <tfoot>
                                         <tr>
@@ -436,8 +520,25 @@
 
 @endsection
 @section('script')
-
     <script>
+        function autoResize(textarea) {
+            // Reset the height to 'auto' to shrink it before expanding
+            textarea.style.height = 'auto';
+            // Set the height to the scrollHeight, which is the full height of the content
+            textarea.style.height = textarea.scrollHeight + 'px';
+        }
+        window.addEventListener('load', function() {
+            const textareas = document.querySelectorAll('textarea');
+            textareas.forEach(textarea => {
+                autoResize(textarea);
+            });
+        });
+        function resizeInput(input) {
+            input.style.width = ((input.value.length + 1) * 8) + "px";
+        }
+    </script>
+    <script>
+
         var urlss = "{{ url('showItemsDropDown') }}";
         var csrf_tokens = "{{ csrf_token() }}";
         var item_list_id = '#item_list_id';
@@ -575,47 +676,79 @@
 
         $(document).on('click', '.add-row', function (e) {
             e.preventDefault();
+
             var newRow = `
             <tr class="dynamic-row">
-                <td><button class="btn btn-sm btn-outline-danger remove-row"><i class='bx bx-trash'></i></button></td>
+                <td><button class="btn btn-sm btn-outline-danger remove-row "><i class="bx bx-trash"></i></button></td>
                 <td>
                     <div class="form-group">
                         <input type="hidden" id="itemIDs" name="itemIDs[]"/>
                         <input type="hidden" id="attributes" name="attributes[]"/>
-                        <input type="hidden" id="attributeValues" name="attributeValues[]"/>
-                        <textarea class="form-control" name="itemdetailsTextArea" id="itemdetailsTextArea">Item : Item Name, Size : Item Size, Capacity : Item Capacity</textarea>
+                        <input type="hidden" id="attributeValues" name="attributeValues"/>
+
+                        <textarea oninput="autoResize(this)" type="text" readonly class="form-control form-control-text-area" name="itemdetailsTextArea[]" id="itemdetailsTextArea">Item : Item Name, Size : Item Size, Capacity : Item Capacity</textarea>
                         <input type="button" class="mt-1 btn btn-outline-info btn-sm addAttributes" value="Select Item Attribute & Values">
                     </div>
                 </td>
                 <td>
                     <div class="form-group">
-                        <select class="form-control select2 cur_code" name="cur_code[]" id="cur_code">
+                        <select class="form-control select2 cur_code1 resizable-select" id="cur_code1" name="cur_code1[]">
                             <option value="">Select</option>
                             <option value="0001">Taka</option>
                             <option value="0002">USD</option>
                             <option value="0003">Pound</option>
                             <option value="0004">Frunk</option>
                             <option value="0005">EURO</option>
-                            <option value="0006">Kuwati Diner</option>
+                            <option value="0006">Kuwaiti Dinar</option>
                             <option value="0007">HONG KONG DOLLAR</option>
                             <option value="0008">YEN</option>
                             <option value="0009">INR</option>
                         </select>
                     </div>
                 </td>
-                <td><input type="number" class="form-control" name="con_rate[]" value="0" id="con_rate" placeholder="Qty" /></td>
-                <td><input type="number" class="form-control" name="unit_cost[]" value="0" id="unit_cost" placeholder="Qty" /></td>
-                <td><input type="number" class="form-control" name="qunty[]" value="0" id="qunty" placeholder="Qty" /></td>
-                <td><input type="number" class="form-control" name="vat[]" value="0" id="vat" placeholder="Vat" /></td>
-                <td><input type="number" class="form-control" name="atc[]" value="0" id="atc" placeholder="ATC" /></td>
-                <td><input type="number" class="form-control" name="item_cost[]" value="0" id="item_cost" placeholder="item cost"></td>
+                <td>
+                    <div class="form-group">
+                        <select class="form-control select2 cur_code resizable-select" id="cur_code" name="cur_code[]">
+                            <option value="">Select</option>
+                            <option value="0001">Taka</option>
+                            <option value="0002">USD</option>
+                            <option value="0003">Pound</option>
+                            <option value="0004">Frunk</option>
+                            <option value="0005">EURO</option>
+                            <option value="0006">Kuwaiti Dinar</option>
+                            <option value="0007">HONG KONG DOLLAR</option>
+                            <option value="0008">YEN</option>
+                            <option value="0009">INR</option>
+                        </select>
+                    </div>
+                </td>
+                <td><input type="number" class="form-control resizable-input" name="con_rate[]" value="0" min="0" id="con_rate"  oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="unit_cost[]" value="0" min="0"  id="unit_cost" oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="qunty[]" value="0" min="0"  id="qunty" oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="amountTotal[]" value="0" min="0"  id="amountTotal" readonly oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="vat_d[]" value="0" min="0"  id="vat" readonly oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="tax_d[]" value="0" min="0"  id="tax" readonly oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="transportation_d[]" value="0" min="0"  id="transportation" readonly oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="freight_d[]" value="0" min="0"  id="freight" readonly oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="installation_d[]" value="0" min="0"  id="installation" readonly oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="other_d[]" value="0" min="0"  id="other" readonly oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="discount_d[]" value="0" min="0"  id="discount" readonly oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="item_total_cost[]" value="0" min="0"  id="item_total_cost" readonly oninput="resizeInput(this)"></td>
+                <td><input type="number" class="form-control resizable-input" name="item_total_cost_bdt[]" value="0" min="0"  id="item_total_cost_bdt" readonly oninput="resizeInput(this)"></td>
             </tr>`;
+
+            // Append the new row to the table
             $('#rowsContainer').append(newRow);
+
+            // Re-initialize select2 for all select elements in the table
+            $('#rowsContainer .select2').select2();
+
             // Re-initialize the event listener for the new row
             $('#rowsContainer .dynamic-row:last input').on('input', function () {
                 var row = $(this).closest('tr');
                 updateItemCost(row);
             });
+
             // Initial calculation for the newly added row
             var newRow = $('#rowsContainer .dynamic-row:last');
             updateItemCost(newRow);
@@ -654,8 +787,8 @@
             var attributeIds = [];
             var attributeValues = [];
             var attributeValueIds = [];
-
-            $('#rowsContainerItem').find('tr').each(function () {
+            var attributeValueIdsString ="";
+                $('#rowsContainerItem').find('tr').each(function () {
                 var attribute_id = $(this).find('.attribute_info_id').val();
                 var attribute_name = $(this).find('.attribute_info_id option:selected').text();
                 var attribute_value_id = $(this).find('.attribute_values_info_id').val();
@@ -668,6 +801,8 @@
                     });
                     attributeIds.push(attribute_id); // Save only the attribute_id
                     attributeValueIds.push(attribute_value_id);
+                    attributeValueIdsString = attributeValueIds.join(',');
+                    console.log(attributeValueIdsString);
 
                     attributeValues.push({
                         name: attribute_value_name,
@@ -697,7 +832,7 @@
 
             itemIDsInput.val(item_id);
             attributesInput.val('{' + attributeIds.join(',') + '}');
-            attributeValuesInput.val(JSON.stringify(attributeValueIds));
+            attributeValuesInput.val(attributeValueIdsString);
             $("#largeModal form")[0].reset();
 
             $('#largeModal').modal('hide');
@@ -707,14 +842,48 @@
             var con_rate = parseFloat(row.find('input[name="con_rate[]"]').val()) || 0;
             var unit_cost = parseFloat(row.find('input[name="unit_cost[]"]').val()) || 0;
             var qunty = parseFloat(row.find('input[name="qunty[]"]').val()) || 0;
-            var vatt = parseFloat(row.find('input[name="vat[]"]').val()) || 0;
-            var atct = parseFloat(row.find('input[name="atc[]"]').val()) || 0;
-
-            var item_cost = (con_rate * unit_cost * qunty) + (vatt + atct);
-
-            row.find('input[name="item_cost[]"]').val(item_cost.toFixed(2));
+            var item_cost = (con_rate * unit_cost * qunty);
+            row.find('input[name="amountTotal[]"]').val(item_cost.toFixed(2));
+            updateVatAmount(row);
         }
 
+        function updateVatAmount(row) {
+            var vat_amount = parseFloat($('#vat').val()) || 0;
+            var tax_amount = parseFloat($('#tax').val()) || 0;
+            var transportation_amount = parseFloat($('#transportation').val()) || 0;
+            var freight_amount = parseFloat($('#freight').val()) || 0;
+            var installation_amount = parseFloat($('#installation').val()) || 0;
+            var other_amount = parseFloat($('#other').val()) || 0;
+            var discount_amount = parseFloat($('#discount').val()) || 0;
+
+            var totalAmount = 0;
+            $('#rowsContainer .dynamic-row').each(function () {
+                var row_qnty = parseFloat($(this).find('input[name="amountTotal[]"]').val()) || 0;
+                totalAmount += row_qnty;
+            });
+            $('#rowsContainer .dynamic-row').each(function () {
+                var rowAmount = parseFloat($(this).find('input[name="amountTotal[]"]').val()) || 0;
+                var rowVat = (rowAmount / totalAmount) * vat_amount;
+                var rowTax = (rowAmount / totalAmount) * tax_amount;
+                var rowTransportation = (rowAmount / totalAmount) * transportation_amount;
+                var rowFreight = (rowAmount / totalAmount) * freight_amount;
+                var rowInstallation = (rowAmount / totalAmount) * installation_amount;
+                var rowOther = (rowAmount / totalAmount) * other_amount;
+
+                $(this).find('input[name="vat_d[]"]').val(rowVat.toFixed(2));
+                $(this).find('input[name="tax_d[]"]').val(rowTax.toFixed(2));
+                $(this).find('input[name="transportation_d[]"]').val(rowTransportation.toFixed(2));
+                $(this).find('input[name="freight_d[]"]').val(rowFreight.toFixed(2));
+                $(this).find('input[name="installation_d[]"]').val(rowInstallation.toFixed(2));
+                $(this).find('input[name="other_d[]"]').val(rowOther.toFixed(2));
+                $(this).find('input[name="discount_d[]"]').val(rowVat.toFixed(2));
+            });
+        }
+
+        $(document).on('input', 'input[name="VAT"], input[name="Tax"], input[name="Transportation"], input[name="Freight"], input[name="Installation"], input[name="Other"], input[name="Discount"]', function () {
+            var row = $(this).closest('tr');
+            updateItemCost(row);
+        });
         $(document).on('input', 'input[name="con_rate[]"], input[name="unit_cost[]"], input[name="qunty[]"], input[name="vat[]"], input[name="atc[]"]', function () {
             var row = $(this).closest('tr');
             updateItemCost(row);
@@ -741,7 +910,7 @@
                 var unit_cost = $(this).find('#unit_cost').val();
                 var qunty = $(this).find('#qunty').val();
                 var vat = $(this).find('#vat').val();
-                var atc = $(this).find('#atc').val();
+                var atc = $(this).find('#tax').val();
 
                 if (con_rate && unit_cost) {
                     itemDetailsInfo.push({

@@ -1,4 +1,4 @@
-@section('title',"PO Create")
+@section('title',"PO Edit")
 @extends('layout.app')
 @section('style')
     <style>
@@ -29,29 +29,31 @@
             <div class="col-12 grid-margin stretch-card">
                 <div class="card">
                     <div class="card-body" id="itemDataAdd">
-                        <h4 class="card-title">Item Create</h4>
-                        <p class="card-description">
-                            Basic form elements
-                        </p>
+                        <h4 class="card-title">PO Edit</h4>
+
                         <form class="forms-sample">@csrf
                             <div class="row">
                                 <div class="col m-1">
-                                    <label class="form-label" for="purchase_order_no">Purchase Order No</label>
-                                    <input type="text" class="form-control" name="purchase_order_no" id="purchase_order_no" placeholder="John Doe" />
+                                    <label class="form-label" for="purchase_order_no">PO No</label>
+                                    <input type="text" class="form-control" name="purchase_order_no" id="purchase_order_no" placeholder="Enter PO Number" />
                                 </div>
                                 <div class="col m-1">
-                                    <label class="form-label" for="purchase_order_date">Purchase Order Date</label>
+                                    <label class="form-label" for="purchase_order_date">PO Date</label>
                                     <input type="text" class="form-control" name="purchase_order_date" id="purchase_order_date" placeholder="ACME Inc." />
+                                </div>
+                                <div class="col m-1">
+                                    <label for="origin">PO Origin</label>
+                                    <select class="form-control select2" name="origin" id="origin">
+                                        <option value="">Select Purchase Order Origin</option>
+                                        <option value="F">Foreign</option>
+                                        <option value="L">Local</option>
+                                    </select>
                                 </div>
                             </div>
                             <div class="row">
                                 <div class="col m-1">
                                     <label class="form-label" for="lc_number">LC Number</label>
                                     <input type="text" class="form-control" name="lc_number" id="lc_number" placeholder="John Doe" />
-                                </div>
-                                <div class="col m-1">
-                                    <label class="form-label" for="lc_date">LC Date</label>
-                                    <input type="text" class="form-control" name="lc_date" id="lc_date" placeholder="ACME Inc." />
                                 </div>
                                 <div class="col m-1">
                                     <label class="form-label" for="lc_bank_id">LC Bank Name</label>
@@ -73,28 +75,26 @@
                                         <option value="14">Shahjalal Islami Bank Limited</option>
                                     </select>
                                 </div>
+                                <div class="col m-1">
+                                    <label class="form-label" for="lc_date">LC Date</label>
+                                    <input type="text" class="form-control" name="lc_date" id="lc_date" placeholder="ACME Inc." />
+                                </div>
                             </div>
                             <div class="row">
                                 <div class="col m-1">
-                                    <label for="supplier_id">Supplier</label>
-                                    <select class="form-control select2" name="supplier_id" id="supplier_id">
-                                        <option value="">Select Supplier</option>
-                                        <option value="000011">joint Venture of Shenzhen inhemeter,co.Ltd</option>
-                                        <option value="000012">M/S. Powermann Bangladesh Ltd</option>
-                                        <option value="000013">M/S. REVERIE POWER &amp; AUTOMATION ENGINEERING LTD</option>
-                                        <option value="000123">M/S Khan Brothers International, KBG</option>
-                                        <option value="000174">Shikalbaha 60 MW Power Station,BPDB,Ctg.</option>
-                                        <option value="000175">Meghna Petroleum Limited</option>
-                                        <option value="000176">M/S Ideal Electrical Enterprise Ltd.</option>
-                                        <option value="000177">Kamal &amp; Brothers, Vill &amp; Post. Shikalbaha, P.S. Karnaphuli, Chattagram.</option>
-                                        <option value="000178">M/s Nur-A-Mashruf</option>
-                                        <option value="000179">Shonali Electric, Agrabad, Chattogram.</option>
-                                        <option value="000180">M/S. Rubel Automobiles, &amp; Workshop, 161, Sk. Mujib Road, Barik Building,Chattogram.</option>
-                                        <option value="000181">M/S. Progressive Engineering &amp; Construction Co. Ltd. 17/2, Eskaton Garden Road, Dhaka-1000.</option>
-                                        <option value="000182">M/s. Safety Power, 142/3, Arambagh (1st Floor), Motijheel, Dhaka-1000, Bangladesh</option>
-                                        <option value="000183">Multistar Technologies,Lorna office complex, 94/A New Eskaton road, Dhaka.</option>
-                                        <option value="000184">FLORA LIMITED, Chattogram.</option>
-                                        <option value="000185">Chowdhury Motors, 314, Sk. Mujib Road, Chattogram.</option>
+                                    <label for="cost_type">Cost Type</label>
+                                    <select class="form-control select2" name="cost_type" id="cost_type">
+                                        <option value="">Select Cost Type</option>
+                                        <option value="P">Purchase Cost</option>
+                                        <option value="T">Transportation Cost</option>
+                                        <option value="O">Other Cost</option>
+                                    </select>
+                                </div>
+                                <div class="col m-1">
+                                    <label for="store">Store</label>
+                                    <select class="form-control select2" name="store" id="store">
+                                        <option value="">Select Store</option>
+                                        <option value="L168">IVVR Project, Phase II, BPDB, Dhaka</option>
                                     </select>
                                 </div>
                                 <div class="col m-1">
@@ -253,15 +253,37 @@
                                         <option value="429">Khulna Power Station</option>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="row">
+                                <div class="col m-1">
+                                    <label for="supplier_id">Supplier</label>
+                                    <select class="form-control select2" name="supplier_id" id="supplier_id">
+                                        <option value="">Select Supplier</option>
+                                        <option value="000011">joint Venture of Shenzhen inhemeter,co.Ltd</option>
+                                        <option value="000012">M/S. Powermann Bangladesh Ltd</option>
+                                        <option value="000013">M/S. REVERIE POWER &amp; AUTOMATION ENGINEERING LTD</option>
+                                        <option value="000123">M/S Khan Brothers International, KBG</option>
+                                        <option value="000174">Shikalbaha 60 MW Power Station,BPDB,Ctg.</option>
+                                        <option value="000175">Meghna Petroleum Limited</option>
+                                        <option value="000176">M/S Ideal Electrical Enterprise Ltd.</option>
+                                        <option value="000177">Kamal &amp; Brothers, Vill &amp; Post. Shikalbaha, P.S. Karnaphuli, Chattagram.</option>
+                                        <option value="000178">M/s Nur-A-Mashruf</option>
+                                        <option value="000179">Shonali Electric, Agrabad, Chattogram.</option>
+                                        <option value="000180">M/S. Rubel Automobiles, &amp; Workshop, 161, Sk. Mujib Road, Barik Building,Chattogram.</option>
+                                        <option value="000181">M/S. Progressive Engineering &amp; Construction Co. Ltd. 17/2, Eskaton Garden Road, Dhaka-1000.</option>
+                                        <option value="000182">M/s. Safety Power, 142/3, Arambagh (1st Floor), Motijheel, Dhaka-1000, Bangladesh</option>
+                                        <option value="000183">Multistar Technologies,Lorna office complex, 94/A New Eskaton road, Dhaka.</option>
+                                        <option value="000184">FLORA LIMITED, Chattogram.</option>
+                                        <option value="000185">Chowdhury Motors, 314, Sk. Mujib Road, Chattogram.</option>
+                                    </select>
+                                </div>
                                 <div class="col m-1">
                                     <label for="department_id">Department</label>
                                     <select class="form-control select2" name="department_id" id="department_id">
                                     </select>
                                 </div>
-                            </div>
-                            <div class="row">
                                 <div class="col m-1">
-                                    <label for="purchase_type">Purchase Type</label>
+                                    <label for="purchase_type">PO Type</label>
                                     <select class="form-control select2" name="purchase_type" id="purchase_type">
                                         <option value="">Select Purchase Type</option>
                                         <option value="OT">Open Tendering Method</option>
@@ -273,32 +295,47 @@
                                         <option value="OH">Others</option>
                                     </select>
                                 </div>
+                            </div>
+                            <div class="row">
                                 <div class="col m-1">
-                                    <label for="cost_type">Cost Type</label>
-                                    <select class="form-control select2" name="cost_type" id="cost_type">
-                                        <option value="">Select Cost Type</option>
-                                        <option value="P">Purchase Cost</option>
-                                        <option value="T">Transportation Cost</option>
-                                        <option value="O">Other Cost</option>
-                                    </select>
+                                    <label class="form-label" for="vat">VAT</label>
+                                    <input type="number" class="form-control" value="0" name="vat" id="vat" placeholder="Enter VAT Amount" />
                                 </div>
                                 <div class="col m-1">
-                                    <label for="store">Store</label>
-                                    <select class="form-control select2" name="store" id="store">
-                                        <option value="">Select Store</option>
-                                        <option value="L168">IVVR Project, Phase II, BPDB, Dhaka</option>
-                                    </select>
+                                    <label class="form-label" for="tax">Tax</label>
+                                    <input type="number" class="form-control" value="0" name="tax" id="tax" placeholder="Enter Tax Amount" />
                                 </div>
                                 <div class="col m-1">
-                                    <label for="origin">Purchase Order Origin</label>
-                                    <select class="form-control select2" name="origin" id="origin">
-                                        <option value="">Select Purchase Order Origin</option>
-                                        <option value="F">Foreign</option>
-                                        <option value="L">Local</option>
-                                    </select>
+                                    <label class="form-label" for="transportation">Transportation</label>
+                                    <input type="number" class="form-control" value="0" name="transportation" id="transportation" placeholder="Enter Transportation Amount" />
                                 </div>
                             </div>
-
+                            <div class="row">
+                                <div class="col m-1">
+                                    <label class="form-label" for="freight">Freight</label>
+                                    <input type="number" class="form-control" value="0" name="freight" id="freight" placeholder="Enter Freight Amount" />
+                                </div>
+                                <div class="col m-1">
+                                    <label class="form-label" for="installation">Installation</label>
+                                    <input type="number" class="form-control" value="0" name="installation" id="installation" placeholder="Enter Installation Amount" />
+                                </div>
+                                <div class="col m-1">
+                                    <label class="form-label" for="other">Other</label>
+                                    <input type="number" class="form-control" value="0" name="other" id="other" placeholder="Enter Other Amount" />
+                                </div>
+                            </div>
+                            <div class="row">
+                                <div class="col m-1">
+                                    <label class="form-label" for="discount">Discount</label>
+                                    <input type="number" class="form-control" value="0" name="discount" id="discount" placeholder="Enter Discount Amount" />
+                                </div>
+                                <div class="col m-1">
+                                </div>
+                                <div class="col m-1">
+                                </div>
+                                <div class="col m-1">
+                                </div>
+                            </div>
                             <div class="form-group table-responsive" id="itemSpack">
                                 <label for="origin">PO Item Details</label>
                                 <div class="table-responsive text-nowrap">
@@ -410,7 +447,7 @@
             success: function (data) {
                 $('#id').val(data.poMaster.id);
                 $('#purchase_order_no').val(data.poMaster.purchase_order_no);
-                $('#purchase_order_date').val(data.poMaster.purchase_order_date);
+                $('#purchase_rder_date').val(data.poMaster.purchase_order_date);
                 $('#lc_number').val(data.poMaster.lc_number);
                 $('#lc_date').val(data.poMaster.lc_date);
                 $('#lc_bank_id').val(data.poMaster.lc_bank_id).trigger('change');
@@ -421,6 +458,13 @@
                 $('#cost_type').val(data.poMaster.cost_type).trigger('change');
                 $('#store').val(data.poMaster.store).trigger('change');
                 $('#origin').val(data.poMaster.origin).trigger('change');
+                $('#vat').val(data.poMaster.vat);
+                $('#tax').val(data.poMaster.tax);
+                $('#transportation').val(data.poMaster.transportation);
+                $('#freight').val(data.poMaster.freight);
+                $('#installation').val(data.poMaster.installation);
+                $('#other').val(data.poMaster.other);
+                $('#discount').val(data.poMaster.discount);
 
                 // Iterate through itemAttributes and create rows accordingly
                 data.poDetails.forEach(function(attributeData) {
