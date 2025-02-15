@@ -3,7 +3,7 @@
 -- https://www.phpmyadmin.net/
 --
 -- Host: 127.0.0.1
--- Generation Time: Jan 29, 2025 at 08:01 PM
+-- Generation Time: Feb 15, 2025 at 06:28 PM
 -- Server version: 10.4.32-MariaDB
 -- PHP Version: 8.2.12
 
@@ -327,8 +327,6 @@ CREATE TABLE `purchase_order_dtl` (
   `cur_code` int(11) DEFAULT NULL,
   `con_rate` varchar(50) DEFAULT NULL,
   `unit_cost` varchar(50) DEFAULT NULL,
-  `vat` varchar(50) DEFAULT NULL,
-  `atc` varchar(50) DEFAULT NULL,
   `remark` text DEFAULT 'I',
   `status` varchar(10) DEFAULT 'I',
   `create_by` varchar(30) DEFAULT NULL,
@@ -341,12 +339,17 @@ CREATE TABLE `purchase_order_dtl` (
 -- Dumping data for table `purchase_order_dtl`
 --
 
-INSERT INTO `purchase_order_dtl` (`id`, `purchase_order_id`, `item_id`, `attribute_id`, `attribute_values_id`, `rate`, `qunty`, `cur_code`, `con_rate`, `unit_cost`, `vat`, `atc`, `remark`, `status`, `create_by`, `create_date`, `update_by`, `update_date`) VALUES
-(1, 4, 123009, '{121000,121001,121003}', '122001,122004,122005', '1', '3', 3, '1', '54', '83', '9', 'N/A', 'A', '1', '2025-01-29 16:27:58', NULL, NULL),
-(2, 4, 123014, '{121000,121001,121003,121004}', '122029,122030,122031,122032', '1', '41', 6, '1', '93', '30', '95', 'N/A', 'A', '1', '2025-01-29 16:27:58', NULL, NULL),
-(3, 5, 123009, '{121000,121001,121003}', '122001,122006,122005', '2', '54', 3, '2', '42', '21', '29', 'N/A', 'A', '1', '2025-01-29 16:31:46', '1', NULL),
-(4, 5, 123014, '{121000,121001,121004}', '122029,122030,122032', '2', '11', 3, '2', '96', '35', '12', 'N/A', 'A', '1', '2025-01-29 16:31:46', '1', NULL),
-(5, 6, 123014, '{121001,121003,121004}', '122030,122031,122032', '5', '42', 5, '5', '83', '8', '1', 'N/A', 'A', '1', '2025-01-29 16:37:30', '1', NULL);
+INSERT INTO `purchase_order_dtl` (`id`, `purchase_order_id`, `item_id`, `attribute_id`, `attribute_values_id`, `rate`, `qunty`, `cur_code`, `con_rate`, `unit_cost`, `remark`, `status`, `create_by`, `create_date`, `update_by`, `update_date`) VALUES
+(1, 4, 123009, '{121000,121001,121003}', '122001,122004,122005', '1', '3', 3, '1', '54', 'N/A', 'A', '1', '2025-01-29 16:27:58', NULL, NULL),
+(2, 4, 123014, '{121000,121001,121003,121004}', '122029,122030,122031,122032', '1', '41', 6, '1', '93', 'N/A', 'A', '1', '2025-01-29 16:27:58', NULL, NULL),
+(3, 5, 123009, '{121000,121001,121003}', '122001,122006,122005', '2', '54', 3, '2', '42', 'N/A', 'A', '1', '2025-01-29 16:31:46', '1', NULL),
+(4, 5, 123014, '{121000,121001,121004}', '122029,122030,122032', '2', '11', 3, '2', '96', 'N/A', 'A', '1', '2025-01-29 16:31:46', '1', NULL),
+(5, 6, 123014, '{121001,121003,121004}', '122030,122031,122032', '5', '42', 5, '5', '83', 'N/A', 'A', '1', '2025-01-29 16:37:30', '1', NULL),
+(6, 10, 123009, '{121000,121001,121003}', '122001,122004,122005', '1', '100', 1, '1', '10', 'N/A', 'A', '1', '2025-01-31 18:41:19', NULL, NULL),
+(7, 11, 123014, '{121001,121003}', '122030,122037', '1', '79', 1, '1', '89', 'N/A', 'A', '1', '2025-02-01 12:07:29', NULL, NULL),
+(8, 14, 123009, '{121000,121001,121003}', '122001,122004,122005', '1', '71', 1, '1', '87', 'N/A', 'A', '1', '2025-02-01 12:11:50', NULL, NULL),
+(9, 15, 123014, '{121001,121000}', '122030,122028', '1', '29', 7, '1', '86', 'N/A', 'A', '1', '2025-02-01 12:14:24', NULL, NULL),
+(10, 16, 123009, '{121000,121001,121003}', '122001,122004,122005', '1', '31', 1, '1', '94', 'N/A', 'A', '1', '2025-02-01 12:37:46', NULL, NULL);
 
 -- --------------------------------------------------------
 
@@ -382,6 +385,13 @@ CREATE TABLE `purchase_order_mst` (
   `consignee_id` varchar(50) DEFAULT NULL,
   `department_id` varchar(50) DEFAULT NULL,
   `authorization` varchar(100) DEFAULT 'Pendding',
+  `vat` varchar(50) DEFAULT '0',
+  `tax` varchar(50) DEFAULT '0',
+  `transportation` varchar(50) DEFAULT '0',
+  `freight` varchar(50) DEFAULT '0',
+  `installation` varchar(50) DEFAULT '0',
+  `other` varchar(50) DEFAULT '0',
+  `discount` varchar(50) DEFAULT '0',
   `status` varchar(1) DEFAULT 'I',
   `create_by` varchar(30) DEFAULT NULL,
   `create_date` datetime DEFAULT current_timestamp(),
@@ -393,10 +403,20 @@ CREATE TABLE `purchase_order_mst` (
 -- Dumping data for table `purchase_order_mst`
 --
 
-INSERT INTO `purchase_order_mst` (`id`, `purchase_order_no`, `purchase_order_date`, `lc_bank_id`, `lc_number`, `lc_date`, `purchase_type`, `cost_type`, `store`, `origin`, `supplier_id`, `consignee_id`, `department_id`, `authorization`, `status`, `create_by`, `create_date`, `update_by`, `update_date`) VALUES
-(4, 'Sed pariatur Aliqua', '17-Feb-1999', '06', '883', '27-Nov-2005', 'TS', NULL, 'L168', 'F', '000013', '210', NULL, 'Pending', 'A', '1', '2025-01-29 16:27:58', NULL, NULL),
-(5, 'Fuga Amet perspici', '01-Jan-1982', '09', '475', '19-Sep-1971', 'OH', NULL, 'L168', 'F', '000011', '730', NULL, 'Authorization Level 1 Pending', 'A', '1', '2025-01-29 16:31:46', '1', NULL),
-(6, 'Perferendis velit es', '08-Sep-2009', '07', '88', '16-Oct-2002', 'OT', NULL, 'L168', 'L', '000174', '752', NULL, 'Pending', 'A', '1', '2025-01-29 16:37:30', '1', NULL);
+INSERT INTO `purchase_order_mst` (`id`, `purchase_order_no`, `purchase_order_date`, `lc_bank_id`, `lc_number`, `lc_date`, `purchase_type`, `cost_type`, `store`, `origin`, `supplier_id`, `consignee_id`, `department_id`, `authorization`, `vat`, `tax`, `transportation`, `freight`, `installation`, `other`, `discount`, `status`, `create_by`, `create_date`, `update_by`, `update_date`) VALUES
+(4, 'Sed pariatur Aliqua', '17-Feb-1999', '06', '883', '27-Nov-2005', 'TS', NULL, 'L168', 'F', '000013', '210', NULL, 'Pending', '0', '0', '0', '0', '0', '0', '0', 'A', '1', '2025-01-29 16:27:58', NULL, NULL),
+(5, 'Fuga Amet perspici', '01-Jan-1982', '09', '475', '19-Sep-1971', 'OH', NULL, 'L168', 'F', '000011', '730', NULL, 'Authorization Level 1 Pending', '0', '0', '0', '0', '0', '0', '0', 'A', '1', '2025-01-29 16:31:46', '1', NULL),
+(6, 'Perferendis velit es', '08-Sep-2009', '07', '88', '16-Oct-2002', 'OT', NULL, 'L168', 'L', '000174', '752', NULL, 'Pending', '0', '0', '0', '0', '0', '0', '0', 'A', '1', '2025-01-29 16:37:30', '1', NULL),
+(7, 'Repellendus Digniss', '03-Dec-2000', '05', '32', '16-May-1977', 'TS', 'P', 'L168', 'F', '000182', '826', NULL, 'Pending', '0', '0', '0', '0', '0', '0', '0', 'A', '1', '2025-01-31 18:39:43', NULL, NULL),
+(8, 'Repellendus Digniss', '03-Dec-2000', '05', '32', '16-May-1977', 'TS', 'P', 'L168', 'F', '000182', '826', NULL, 'Pending', '0', '0', '0', '0', '0', '0', '0', 'A', '1', '2025-01-31 18:40:07', NULL, NULL),
+(9, 'Debitis quo incidunt', '15-Jun-2023', '13', '964', '25-Jul-1977', 'DP', 'O', 'L168', 'F', '000178', '837', NULL, 'Authorization Level 1 Pending', '0', '0', '0', '0', '0', '0', '0', 'A', '1', '2025-01-31 18:41:04', '1', NULL),
+(10, 'Debitis quo incidunt', '15-Jun-2023', '13', '964', '25-Jul-1977', 'DP', 'O', 'L168', 'F', '000178', '837', NULL, 'Pending', '0', '0', '0', '0', '0', '0', '0', 'A', '1', '2025-01-31 18:41:19', NULL, NULL),
+(11, 'Inventore aliquip au', '08-Sep-1998', '11', '258', '29-Apr-2004', 'TS', 'O', 'L168', 'L', '000123', '763', NULL, 'Pending', '95', '62', '29', '53', '50', '68', '97', 'A', '1', '2025-02-01 12:07:29', NULL, NULL),
+(12, 'Vitae voluptas labor', '06-Jul-1976', '05', '706', '17-Apr-2022', 'OT', 'P', 'L168', 'F', '000178', '301', NULL, 'Pending', '61', '58', '90', '30', '76', '3', '48', 'A', '1', '2025-02-01 12:10:51', NULL, NULL),
+(13, 'Vitae voluptas labor', '06-Jul-1976', '05', '706', '17-Apr-2022', 'OT', 'P', 'L168', 'F', '000178', '301', NULL, 'Pending', '61', '58', '90', '30', '76', '3', '48', 'A', '1', '2025-02-01 12:11:04', NULL, NULL),
+(14, 'PO with 3 item', '06-Jul-1976', '05', '706', '17-Apr-2022', 'OT', 'P', 'L168', 'F', '000178', '301', NULL, 'Pending', '61', '58', '90', '30', '76', '3', '48', 'A', '1', '2025-02-01 12:11:50', NULL, NULL),
+(15, 'Amet ut aliquid in', '09-Apr-2008', '14', '648', '28-Mar-2024', 'OH', 'P', 'L168', 'F', '000183', '418', NULL, 'Pending', '77', '79', '70', '70', '45', '69', '26', 'A', '1', '2025-02-01 12:14:24', NULL, NULL),
+(16, 'Store To PO Batteries', '07-Jul-1983', '13', '20', '07-Jul-1996', 'LT', 'O', 'L168', 'F', '000011', '762', NULL, 'Authorization Level 1 Pending', '84', '63', '62', '49', '94', '23', '62', 'A', '1', '2025-02-01 12:37:46', '1', NULL);
 
 -- --------------------------------------------------------
 
@@ -7489,7 +7509,7 @@ ALTER TABLE `personal_access_tokens`
 -- AUTO_INCREMENT for table `purchase_order_dtl`
 --
 ALTER TABLE `purchase_order_dtl`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=6;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=11;
 
 --
 -- AUTO_INCREMENT for table `purchase_order_dtl_attributes`
@@ -7501,7 +7521,7 @@ ALTER TABLE `purchase_order_dtl_attributes`
 -- AUTO_INCREMENT for table `purchase_order_mst`
 --
 ALTER TABLE `purchase_order_mst`
-  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=7;
+  MODIFY `id` int(11) NOT NULL AUTO_INCREMENT, AUTO_INCREMENT=17;
 
 --
 -- AUTO_INCREMENT for table `st_auxiliary_item_type`
